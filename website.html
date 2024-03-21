@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://preview.redd.it/third-person-project-v0-7i1hyn7es6fa1.png?width=1916&format=png&auto=webp&s=2b065e6b4b0a6a290df17813a55c1e6c40b87427') no-repeat center center fixed;
+            background-size: cover;
+            color: #000; /* Changed text color to black */
+        }
+        .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+}
+
+        .left-section {
+            flex: 5; /* Adjusted width of the left section */
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            color: #333;
+            font-size: 58px;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .left-section nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .left-section nav ul li {
+            margin-bottom: 10px;
+        }
+        .left-section nav ul li a {
+            color: #000; /* Changed color for better visibility */
+            text-decoration: none;
+        }
+        .right-section {
+    flex: 20;
+    padding: 20px;
+    max-width: 320vw; /* Adjusted max-width */
+}
+
+        .right-section > div {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .profile-img {
+            display: block;
+            margin: 20px auto;
+            width: 200px;
+            border-radius: 50%;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            text-decoration: none;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .button:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+            color: #333;
+        }
+        .project {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .project img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .project p {
+            color: #333;
+        }
+        footer {
+            background-color: rgba(51, 51, 51, 0.8);
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 14px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-section">
+            <nav>
+                <ul>
+                    <li><a href="#about">About Me</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#artworks">Artworks</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="right-section">
+            <div id="about">
+                <h2>About Me</h2>
+                <div class="about-container">
+                    <img class="profile-img" src="https://media.licdn.com/dms/image/D4E03AQEP-AYdooC57g/profile-displayphoto-shrink_200_200/0/1703886195040?e=1716422400&v=beta&t=NWW9ihcj6ZSkUDVwaNvFs7RQV_bFFt4hWcfrPoRxgN0" alt="">
+                    <p>I am a 22-year-old student majoring in Digital Game Design at Eastern Mediterranean University. I have a strong understanding of art fundamentals. I am proficient with Blender, Maya, Substance Painter, Photoshop, Zbrush, and Unreal Engine.</p>
+                    <div class="button-container">
+                        <a href="https://www.linkedin.com/in/rzgry/" class="button" target="_blank"><img src="https://cdn.icon-icons.com/icons2/790/PNG/96/linkedin_icon-icons.com_65439.png" alt=""></a>
+                        <a href="https://rzrworks.itch.io/" class="button" target="_blank"><img src="https://cdn.icon-icons.com/icons2/2389/PNG/96/itch_io_logo_icon_145157.png" alt=""></a>
+                        <a href="rzrworks.artstation.com" class="button" target="_blank"><img src="https://cdn.icon-icons.com/icons2/2389/PNG/96/artstation_logo_icon_145479.png" alt=""></a>
+                    </div>
+                </div>
+            </div>
+            <div id="projects">
+    <h2>My Projects</h2>
+    <table>
+        <tr>
+            <td class="project">
+                <a href="https://rzrworks.itch.io/veiled-island">
+                    <img src="https://img.itch.zone/aW1nLzE1NDc3NDQ1LmpwZw==/315x250%23c/M%2BrtST.jpg">
+                    <p>Description: [Project Description]</p>
+                </a>
+            </td>
+            <td width="50"></td> <!-- Empty cell for spacing -->
+            <!-- Add more projects here -->
+            <td class="project">
+                <!-- Project 2 -->
+                <a href="https://rzrworks.itch.io/supernova-galactus">
+                    <img src="https://img.itch.zone/aW1nLzE1NDc3NDg2LmpwZw==/315x250%23c/iYt9af.jpg">
+                    <p>Description: [Project Description]</p>
+                </a>
+            </td>
+            <td width="50"></td> <!-- Empty cell for spacing -->
+            <td class="project">
+                <!-- Project 3 -->
+                <a href="https://rzrworks.itch.io/lowpoly-vehicle-pack">
+                    <img src="https://img.itch.zone/aW1nLzE0ODg2ODA3LnBuZw==/315x250%23c/RlNTgV.png">
+                    <p>Description: [Project Description]</p>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td class="project" colspan="5"></td> <!-- Empty row for spacing -->
+        </tr>
+        <tr>
+            <td class="project">
+                <!-- Project 4 -->
+                <a href="https://rzrworks.itch.io/lowpoly-forest-pack">
+                    <img src="https://img.itch.zone/aW1nLzExNDk5ODE3LnBuZw==/315x250%23c/R0AJNe.png">
+                    <p>Description: [Project Description]</p>
+                </a>
+            </td>
+            <td width="50"></td> <!-- Empty cell for spacing -->
+            <td class="project">
+                <!-- Project 5 -->
+                <a href="#">
+                    <img src="project5_image_url.jpg">
+                    <p>Description: [Project Description]</p>
+                </a>
+            </td>
+            <td width="50"></td> <!-- Empty cell for spacing -->
+            <td class="project">
+                <!-- Project 6 -->
+                <a href="#">
+                    <img src="project6_image_url.jpg">
+                    <p>Description: [Project Description]</p>
+                </a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+            <div id="artworks">
+                <h2>Artworks</h2>
+                <div class="artwork">
+                    <img src="artwork1.jpg" alt="Artwork 1">
+                    <img src="artwork2.jpg" alt="Artwork 2">
+                    <img src="artwork3.jpg" alt="Artwork 3">
+                    <!-- Add more artworks here -->
+                </div>
+            </div>
+            <div id="contact">
+                <h2>Contact</h2>
+                <p>Email: rzgryl33@gmail.com</p>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Your Name. All rights reserved.</p>
+    </footer>
+</body>
+</html>
