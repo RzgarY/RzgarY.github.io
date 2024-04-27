@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
+    <script>
+        // JavaScript ile mobil cihazda left-section'ı gizleme
+        window.onload = function() {
+            if (window.innerWidth < 1080) { // Ekran genişliği 1080 pikselden küçükse
+                document.querySelector('.left-section').style.display = 'none';
+            }
+        };
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
@@ -286,13 +295,5 @@
     <footer>
         <p>&copy; 2024 Your Name. All rights reserved.</p>
     </footer>
-    <script>
-        // JavaScript ile mobil cihazda left-section'ı gizleme
-        window.onload = function() {
-            if (window.innerWidth < 1080) { // Ekran genişliği 1080 pikselden küçükse
-                document.querySelector('.left-section').style.display = 'none';
-            }
-        };
-    </script>
 </body>
 </html>
