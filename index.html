@@ -11,126 +11,282 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio</title>
+<title>Portfolio</title>    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://m.media-amazon.com/images/I/41ioem0FmEL._AC_UF1000,1000_QL80_.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #FFFFFF; /* Changed text color to black */
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+            display: flex;
+            justify-content: center; /* Center horizontally */
+        }
+
+        .left-section {
+            flex: 5; /* Adjusted width of the left section */
+            background-color: rgba(0,0,0, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            color: #333;
+            font-size: 58px;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .left-section nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .left-section nav ul li {
+            margin-bottom: 10px;
+        }
+        .left-section nav ul li a {
+            color: #fff; /* Changed color for better visibility */
+            text-decoration: none;
+        }
+        .right-section {
+            flex: 20;
+            padding: 20px;
+            max-width: 320vw; /* Adjusted max-width */
+        }
+
+        .right-section > div {
+            background-color: rgba(0,0,0, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .profile-img {
+            display: block;
+            margin: 20px auto;
+            width: 200px;
+            border-radius: 50%;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: rgba(0,0,0,, 0.3);
+            color: #fff;
+            text-decoration: none;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .button:hover {
+            background-color: rgba(0,0,0, 0.5);
+            color: #333;
+        }
+        .project {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .project img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .project p {
+            color: #333;
+        }
+        footer {
+            background-color: rgba(51, 51, 51, 0.8);
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 14px;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
-    <div style="max-width: 1400px; margin: 0 auto; padding-bottom: 50px; display: flex; justify-content: space-between;">
-        <div style="flex: 5; background-color: rgba(0,0,0,0.8); padding: 20px; border-radius: 8px; color: #333; font-size: 58px; line-height: 1.5; display: flex; flex-direction: column; justify-content: flex-start; align-items: center;" class="left-section">
+    <div class="container">
+        <div class="left-section">
             <nav>
-                <ul style="list-style-type: none; padding: 0;">
-                    <li style="margin-bottom: 10px;"><a href="#about" style="color: #fff; text-decoration: none;">About Me</a></li>
-                    <li style="margin-bottom: 10px;"><a href="#projects" style="color: #fff; text-decoration: none;">Projects</a></li>
-                    <li style="margin-bottom: 10px;"><a href="#artworks" style="color: #fff; text-decoration: none;">Artworks</a></li>
-                    <li style="margin-bottom: 10px;"><a href="#assets" style="color: #fff; text-decoration: none;">Assets</a></li>
-                    <li style="margin-bottom: 10px;"><a href="#contact" style="color: #fff; text-decoration: none;">Contact</a></li>
+                <ul>
+                    <li><a href="#about">About Me</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#artworks">Artworks</a></li>
+                        <li><a href="#assets">Assets</a></li>
+                    <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
         </div>
-        <div style="flex: 20; padding: 20px; max-width: 320vw;" class="right-section">
-            <div id="about" style="background-color: rgba(0,0,0,0.8); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <div class="right-section">
+            <div id="about">
                 <h2>About Me</h2>
-                <div align="center">
-                    <img src="https://media.licdn.com/dms/image/D4E03AQEP-AYdooC57g/profile-displayphoto-shrink_200_200/0/1703886195040?e=1722470400&v=beta&t=XDGwqbXjdw2he_4Z4hlP2u4bcV8oJzy6hARkLXcju50" alt="" style="display: block; margin: 20px auto; width: 200px; border-radius: 50%;">
-                    <p>I am passionate about creating immersive and engaging digital experiences. Currently pursuing my BA in Game Design at Eastern Mediterranean University, I've gained knowledge in art, animation, and programming.</p>
-                    <p>I've honed my skills in various software tools like Blender, Maya, Substance Painter, Photoshop, Zbrush, and Unreal Engine. Through numerous projects and courses, I've showcased my proficiency and creativity in these areas.</p>
-                    <p>Below, you can explore my 3D portfolio and GitHub links</p>
+                <div class="about-container">
+                    <img class="profile-img" src="https://media.licdn.com/dms/image/D4E03AQEP-AYdooC57g/profile-displayphoto-shrink_200_200/0/1703886195040?e=1722470400&v=beta&t=XDGwqbXjdw2he_4Z4hlP2u4bcV8oJzy6hARkLXcju50" alt="">
                     <div align="center">
-                        <a href="https://www.linkedin.com/in/rzgry/" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: rgba(0,0,0,0.3); color: #fff; text-decoration: none; border: 2px solid #fff; border-radius: 5px; margin-right: 10px;"><img src="https://simpleicons.org/icons/linkedin.svg" alt=""></a>
-                        <a href="https://rzrworks.itch.io/" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: rgba(0,0,0,0.3); color: #fff; text-decoration: none; border: 2px solid #fff; border-radius: 5px; margin-right: 10px;"><img src="https://simpleicons.org/icons/itchdotio.svg" alt=""></a>
-                        <a href="rzrworks.artstation.com" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: rgba(0,0,0,0.3); color: #fff; text-decoration: none; border: 2px solid #fff; border-radius: 5px; margin-right: 10px;"><img src="https://simpleicons.org/icons/artstation.svg" alt=""></a>
-                        <a href="https://github.com/RzgarY" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: rgba(0,0,0,0.3); color: #fff; text-decoration: none; border: 2px solid #fff; border-radius: 5px; margin-right: 10px;"><img src="https://simpleicons.org/icons/github.svg" alt=""></a>
+                        <p>I am passionate about creating immersive and engaging digital experiences. Currently pursuing my BA in Game Design at Eastern Mediterranean University, I've gained knowledge in art, animation, and programming.</p>
+                        <p>I've honed my skills in various software tools like Blender, Maya, Substance Painter, Photoshop, Zbrush, and Unreal Engine. Through numerous projects and courses, I've showcased my proficiency and creativity in these areas.</p>
+                        <p>Below, you can explore my 3D portfolio and GitHub links</p>
+                    </div>
+                    <div class="button-container">
+                        <a href="https://www.linkedin.com/in/rzgry/" class="button" target="_blank"><img src="https://simpleicons.org/icons/linkedin.svg" alt=""></a>
+                        <a href="https://rzrworks.itch.io/" class="button" target="_blank"><img src="https://simpleicons.org/icons/itchdotio.svg" alt=""></a>
+                        <a href="rzrworks.artstation.com" class="button" target="_blank"><img src="https://simpleicons.org/icons/artstation.svg" alt=""></a>
+                            <a href="https://github.com/RzgarY" class="button" target="_blank"><img src="https://simpleicons.org/icons/github.svg" alt=""></a>
                     </div>
                 </div>
             </div>
-            <div id="projects" style="background-color: rgba(0,0,0,0.8); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h2>My Projects</h2>
-                <div align="center">
-                    <table>
-                        <tr>
-                            <td class="project" align="center">
-                                <a href="https://rzrworks.itch.io/veiled-island">
-                                    <img src="https://img.itch.zone/aW1nLzE1OTMwNDIzLnBuZw==/315x250%23c/Ot7Q%2BC.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="project" align="center">
-                                <a href="https://rzrworks.itch.io/supernova-galactus">
-                                    <img src="https://img.itch.zone/aW1nLzE1OTMwNDE4LnBuZw==/315x250%23c/DqMlpp.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="project" align="center">
-                                <a href="https://rzrworks.itch.io/alienized">
-                                    <img src="https://img.itch.zone/aW1nLzE2MTY2NTI5LnBuZw==/315x250%23c/yHksoL.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="project" align="center">
-                                <a href="">
-                                    <img src="" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="project" align="center">
-                                <a href="#">
-                                    <img src="project5_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="project" align="center">
-                                <a href="#">
-                                    <img src="project6_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div id="artworks" style="background-color: rgba(0,0,0,0.8); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <div align="center">
-                    <!-- Video section -->
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/-nCU_VR8kOY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-                <div align="center">
-                    <table>
-                        <tr>
-                            <td class="artwork" align="center">
-                                <a href="https://www.artstation.com/artwork/n0KeX6">
-                                    <img src="https://cdnb.artstation.com/p/assets/images/images/075/101/849/large/ruzgar-yalcin-untitled.jpg?1713774072" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="artwork" align="center">
-                                <a href="https://www.artstation.com/artwork/kQrm6K">
-                                    <img src="https://cdnb.artstation.com/p/assets/images/images/075/101/966/large/ruzgar-yalcin-sv2.jpg?1713774867" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="artwork" align="center">
-                                <a href="https://www.artstation.com/artwork/Pe6KwL">
-                                    <img src="https://cdna.artstation.com/p/assets/images/images/075/102/178/large/ruzgar-yalcin-sv6.jpg?1713776538" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="artwork" align="center">
-                                <a href="https://www.artstation.com/artwork/LRKYYb">
-                                    <img src="https://cdna.artstation.com/p/assets/images/images/075/102/263/large/ruzgar-yalcin-sv8.jpg?1713777114" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div id="assets" style="background-color: rgba(0,0,0,0.8); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <div align="center">
-                    <!-- Video section -->
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/j6HQ_U7wuYY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            </div>
-            <div id="contact" style="background-color: rgba(0,0,0,0.8); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <div id="projects">
+    <h2>My Projects</h2>
+    <div style="display: flex; justify-content: center;">
+        <table>
+            <tr>
+                <td class="project">
+                    <a href="https://rzrworks.itch.io/veiled-island">
+                        <img src="https://img.itch.zone/aW1nLzE1OTMwNDIzLnBuZw==/315x250%23c/Ot7Q%2BC.png" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+                <td width="50"></td> <!-- Empty cell for spacing -->
+                <td class="project">
+                    <a href="https://rzrworks.itch.io/supernova-galactus">
+                        <img src="https://img.itch.zone/aW1nLzE1OTMwNDE4LnBuZw==/315x250%23c/DqMlpp.png" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="project">
+                    <a href="https://rzrworks.itch.io/alienized">
+                        <img src="https://img.itch.zone/aW1nLzE2MTY2NTI5LnBuZw==/315x250%23c/yHksoL.png" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+                <td width="50"></td> <!-- Empty cell for spacing -->
+                <td class="project">
+                    <a href="">
+                        <img src="" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="project">
+                    <a href="#">
+                        <img src="project5_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+                <td width="50"></td> <!-- Empty cell for spacing -->
+                <td class="project">
+                    <a href="#">
+                        <img src="project6_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="artworks">
+    <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+        <div style="width: 100%; text-align: center; margin-bottom: 20px;">
+           <!-- Video section -->
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-nCU_VR8kOY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+        </div>
+
+        <table>
+            <tr>
+                <td class="artwork">
+                    <a href="https://www.artstation.com/artwork/n0KeX6">
+                        <img src="https://cdnb.artstation.com/p/assets/images/images/075/101/849/large/ruzgar-yalcin-untitled.jpg?1713774072" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+                <td width="50"></td> <!-- Empty cell for spacing -->
+                <td class="artwork">
+                    <a href="https://www.artstation.com/artwork/kQrm6K">
+                        <img src="https://cdna.artstation.com/p/assets/images/images/070/010/802/large/ruzgar-yalcin-lucifer2.jpg?1701537461" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="artwork">
+                    <a href="https://www.artstation.com/artwork/39w1mo">
+                        <img src="https://cdna.artstation.com/p/assets/images/images/062/569/496/large/ruzgar-yalcin-untitled-1.jpg?1683465361" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+                <td width="50"></td> <!-- Empty cell for spacing -->
+                <td class="artwork">
+                    <a href="https://www.artstation.com/artwork/vDA2m6">
+                        <img src="https://cdna.artstation.com/p/assets/images/images/059/244/030/large/ruzgar-yalcin-redbull.jpg?1675950689" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="artwork">
+                    <a href="https://www.artstation.com/artwork/eJGLZb">
+                        <img src="https://cdna.artstation.com/p/assets/images/images/059/089/528/large/ruzgar-yalcin-hangar1.jpg?1675624511" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+                <td width="50"></td> <!-- Empty cell for spacing -->
+                <td class="artwork">
+                    <a href="https://www.artstation.com/artwork/ArOKlN">
+                        <img src="https://cdnb.artstation.com/p/assets/images/images/057/450/913/large/ruzgar-yalcin-pikaaaa1920.jpg?1671628863" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="assets">
+    <h2>My Assets</h2>
+    <div style="display: flex; justify-content: center;">
+        <table>
+            <tr>
+                <td class="asset">
+                    <a href="https://rzrworks.itch.io/lowpoly-vehicle-pack">
+                        <img src="https://img.itch.zone/aW1nLzE0ODg2ODA3LnBuZw==/315x250%23c/RlNTgV.png" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+                <td width="50"></td> <!-- Empty cell for spacing -->
+                <td class="asset">
+                    <a href="https://rzrworks.itch.io/lowpoly-forest-pack">
+                        <img src="https://img.itch.zone/aW1nLzExNDk5ODE3LnBuZw==/315x250%23c/R0AJNe.png" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="asset">
+                    <a href="#">
+                        <img src="asset3_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+                <td width="50"></td> <!-- Empty cell for spacing -->
+                <td class="asset">
+                    <a href="#">
+                        <img src="asset4_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="asset">
+                    <a href="#">
+                        <img src="asset5_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+                <td width="50"></td> <!-- Empty cell for spacing -->
+                <td class="asset">
+                    <a href="#">
+                        <img src="asset6_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="contact" style="background-color: rgba(0,0,0,0.8); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                 <h2>Contact Me</h2>
                 <form style="display: flex; flex-direction: column; align-items: center;">
                     <label for="name" style="margin-bottom: 10px; width: 100%;">Name:</label>
