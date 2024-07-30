@@ -1,115 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-    // JavaScript to hide left-section on mobile devices
-    window.onload = function() {
-        if (window.innerWidth < 1080) { // Screen width less than 1080 pixels
-            document.querySelector('.left-section').style.display = 'none';
-        }
-    };
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio</title>    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: url('https://m.media-amazon.com/images/I/41ioem0FmEL._AC_UF1000,1000_QL80_.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: #FFFFFF; /* Changed text color to black */
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-bottom: 50px;
-            display: flex;
-            justify-content: center; /* Center horizontally */
-        }
+<title>Portfolio</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: url('https://m.media-amazon.com/images/I/41ioem0FmEL._AC_UF1000,1000_QL80_.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: #FFFFFF; /* Changed text color to black */
+    }
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding-bottom: 50px;
+        display: flex;
+        justify-content: center; /* Center horizontally */
+    }
 
-        .left-section {
-            flex: 5; /* Adjusted width of the left section */
-            background-color: rgba(0,0,0, 0.8);
-            padding: 20px;
-            border-radius: 8px;
-            color: #333;
-            font-size: 58px;
-            line-height: 1.5;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-        }
-        .left-section nav ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .left-section nav ul li {
-            margin-bottom: 10px;
-        }
-        .left-section nav ul li a {
-            color: #fff; /* Changed color for better visibility */
-            text-decoration: none;
-        }
-        .right-section {
-            flex: 20;
-            padding: 20px;
-            max-width: 320vw; /* Adjusted max-width */
-        }
+    .left-section {
+        flex: 5; /* Adjusted width of the left section */
+        background-color: rgba(0,0,0, 0.8);
+        padding: 20px;
+        border-radius: 8px;
+        color: #333;
+        font-size: 58px;
+        line-height: 1.5;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .left-section nav ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .left-section nav ul li {
+        margin-bottom: 10px;
+    }
+    .left-section nav ul li a {
+        color: #fff; /* Changed color for better visibility */
+        text-decoration: none;
+    }
+    .right-section {
+        flex: 20;
+        padding: 20px;
+        max-width: 320vw; /* Adjusted max-width */
+    }
 
-        .right-section > div {
-            background-color: rgba(0,0,0, 0.8);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+    .right-section > div {
+        background-color: rgba(0,0,0, 0.8);
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .profile-img {
+        display: block;
+        margin: 20px auto;
+        width: 200px;
+        border-radius: 50%;
+    }
+    .button-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: rgba(0,0,0,, 0.3);
+        color: #fff;
+        text-decoration: none;
+        border: 2px solid #fff;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+    .button:hover {
+        background-color: rgba(0,0,0, 0.5);
+        color: #333;
+    }
+    .project {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .project img {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+    .project p {
+        color: #333;
+    }
+    footer {
+        background-color: rgba(51, 51, 51, 0.8);
+        text-align: center;
+        padding: 10px 0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        font-size: 14px;
+        color: #fff;
+    }
+</style>
+<script>
+    // JavaScript to hide left-section and adjust right-section on mobile devices
+    window.onload = function() {
+        function adjustLayout() {
+            if (window.innerWidth < 1080) { // Screen width less than 1080 pixels
+                document.querySelector('.left-section').style.display = 'none';
+                document.querySelector('.right-section').style.flex = '1';
+                document.querySelector('.right-section').style.width = '100%';
+            } else {
+                document.querySelector('.left-section').style.display = 'flex';
+                document.querySelector('.right-section').style.flex = '20';
+            }
         }
-        .profile-img {
-            display: block;
-            margin: 20px auto;
-            width: 200px;
-            border-radius: 50%;
-        }
-        .button-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: rgba(0,0,0,, 0.3);
-            color: #fff;
-            text-decoration: none;
-            border: 2px solid #fff;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        .button:hover {
-            background-color: rgba(0,0,0, 0.5);
-            color: #333;
-        }
-        .project {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .project img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-        .project p {
-            color: #333;
-        }
-        footer {
-            background-color: rgba(51, 51, 51, 0.8);
-            text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            font-size: 14px;
-            color: #fff;
-        }
-    </style>
+        adjustLayout(); // Adjust on page load
+        window.onresize = adjustLayout; // Adjust on window resize
+    };
+</script>
 </head>
 <body>
     <div class="container">
@@ -119,77 +129,77 @@
                     <li><a href="#about">About Me</a></li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#artworks">Artworks</a></li>
-                        <li><a href="#assets">Assets</a></li>
+                    <li><a href="#assets">Assets</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
         </div>
         <div class="right-section">
             <div id="about">
-    <h2>About Me</h2>
-    <div class="about-container">
-        <img class="profile-img" src="https://media.licdn.com/dms/image/D4E03AQEP-AYdooC57g/profile-displayphoto-shrink_200_200/0/1703886195040?e=1722470400&v=beta&t=XDGwqbXjdw2he_4Z4hlP2u4bcV8oJzy6hARkLXcju50" alt="">
-        <div align="center">
-            <p>Hi, I’m Rüzgar, a Game Design student at Eastern Mediterranean University. I’m passionate about creating games, 3D modeling, and texturing. When I’m not working on projects, you’ll find me behind a camera, exploring new places, or glued to an F1 race cheering for Verstappen. I’ve lived in Texas for three months and traveled to Italy, Romania, and Bulgaria. My journey is just beginning, and I’m excited to see where it takes me next.</p>
-            <p>Below, you can explore my 3D portfolio and GitHub links</p>
-        </div>
-        <div class="button-container">
-            <a href="https://www.linkedin.com/in/rzgry/" class="button" target="_blank"><img src="https://simpleicons.org/icons/linkedin.svg" alt=""></a>
-            <a href="https://rzrworks.itch.io/" class="button" target="_blank"><img src="https://simpleicons.org/icons/itchdotio.svg" alt=""></a>
-            <a href="rzrworks.artstation.com" class="button" target="_blank"><img src="https://simpleicons.org/icons/artstation.svg" alt=""></a>
-            <a href="https://github.com/RzgarY" class="button" target="_blank"><img src="https://simpleicons.org/icons/github.svg" alt=""></a>
-        </div>
-    </div>
-</div>
+                <h2>About Me</h2>
+                <div class="about-container">
+                    <img class="profile-img" src="https://media.licdn.com/dms/image/D4E03AQEP-AYdooC57g/profile-displayphoto-shrink_200_200/0/1703886195040?e=1722470400&v=beta&t=XDGwqbXjdw2he_4Z4hlP2u4bcV8oJzy6hARkLXcju50" alt="">
+                    <div align="center">
+                        <p>Hi, I’m Rüzgar, a Game Design student at Eastern Mediterranean University. I’m passionate about creating games, 3D modeling, and texturing. When I’m not working on projects, you’ll find me behind a camera, exploring new places, or glued to an F1 race cheering for Verstappen. I’ve lived in Texas for three months and traveled to Italy, Romania, and Bulgaria. My journey is just beginning, and I’m excited to see where it takes me next.</p>
+                        <p>Below, you can explore my 3D portfolio and GitHub links</p>
+                    </div>
+                    <div class="button-container">
+                        <a href="https://www.linkedin.com/in/rzgry/" class="button" target="_blank"><img src="https://simpleicons.org/icons/linkedin.svg" alt=""></a>
+                        <a href="https://rzrworks.itch.io/" class="button" target="_blank"><img src="https://simpleicons.org/icons/itchdotio.svg" alt=""></a>
+                        <a href="rzrworks.artstation.com" class="button" target="_blank"><img src="https://simpleicons.org/icons/artstation.svg" alt=""></a>
+                        <a href="https://github.com/RzgarY" class="button" target="_blank"><img src="https://simpleicons.org/icons/github.svg" alt=""></a>
+                    </div>
+                </div>
+            </div>
             <div id="projects">
-    <h2>My Projects</h2>
-    <div style="display: flex; justify-content: center;">
-        <table>
-            <tr>
-                <td class="project">
-                    <a href="https://rzrworks.itch.io/veiled-island">
-                        <img src="https://img.itch.zone/aW1nLzE1OTMwNDIzLnBuZw==/315x250%23c/Ot7Q%2BC.png" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="project">
-                    <a href="https://rzrworks.itch.io/supernova-galactus">
-                        <img src="https://img.itch.zone/aW1nLzE1OTMwNDE4LnBuZw==/315x250%23c/DqMlpp.png" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td class="project">
-                    <a href="https://rzrworks.itch.io/alienized">
-                        <img src="https://img.itch.zone/aW1nLzE2MTY2NTI5LnBuZw==/315x250%23c/yHksoL.png" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="project">
-                    <a href="">
-                        <img src="" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td class="project">
-                    <a href="#">
-                        <img src="project5_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="project">
-                    <a href="#">
-                        <img src="project6_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
+                <h2>My Projects</h2>
+                <div style="display: flex; justify-content: center;">
+                    <table>
+                        <tr>
+                            <td class="project">
+                                <a href="https://rzrworks.itch.io/veiled-island">
+                                    <img src="https://img.itch.zone/aW1nLzE1OTMwNDIzLnBuZw==/315x250%23c/Ot7Q%2BC.png" style="max-width: 100%; height: auto;" alt="">
+                                </a>
+                            </td>
+                            <td width="50"></td> <!-- Empty cell for spacing -->
+                            <td class="project">
+                                <a href="https://rzrworks.itch.io/supernova-galactus">
+                                    <img src="https://img.itch.zone/aW1nLzE1OTMwNDE4LnBuZw==/315x250%23c/DqMlpp.png" style="max-width: 100%; height: auto;" alt="">
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="project">
+                                <a href="https://rzrworks.itch.io/alienized">
+                                    <img src="https://img.itch.zone/aW1nLzE2MTY2NTI5LnBuZw==/315x250%23c/yHksoL.png" style="max-width: 100%; height: auto;" alt="">
+                                </a>
+                            </td>
+                            <td width="50"></td> <!-- Empty cell for spacing -->
+                            <td class="project">
+                                <a href="">
+                                    <img src="" style="max-width: 100%; height: auto;" alt="">
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="project">
+                                <a href="#">
+                                    <img src="project5_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
+                                </a>
+                            </td>
+                            <td width="50"></td> <!-- Empty cell for spacing -->
+                            <td class="project">
+                                <a href="#">
+                                    <img src="project6_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
-<div id="artworks">
-    <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+            <div id="artworks">
+                <div style="display: flex; justify-content: center; flex-wrap: wrap;">
         <div style="width: 100%; text-align: center; margin-bottom: 20px;">
            <!-- Video section -->
 <iframe width="560" height="315" src="https://www.youtube.com/embed/-nCU_VR8kOY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -239,8 +249,8 @@
         </table>
     </div>
 </div>
-<div id="assets">
-    <h2>My Assets</h2>
+            <div id="assets">
+                <h2>My Assets</h2>
     <div style="display: flex; justify-content: center;">
         <table>
             <tr>
@@ -285,7 +295,7 @@
         </table>
     </div>
 </div>
-<div id="contact" style="background-color: rgba(0,0,0,0.8); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <div id="contact" style="background-color: rgba(0,0,0,0.8); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
     <h2>Contact Me</h2>
     <form action="https://formspree.io/f/manwwznk" method="POST" style="display: flex; flex-direction: column; align-items: center;">
         <label for="name" style="margin-bottom: 10px; width: 100%;">Name:</label>
@@ -299,5 +309,8 @@
 </div>
         </div>
     </div>
+    <footer>
+        &copy; 2024 Rüzgar Yalçın. All rights reserved.
+    </footer>
 </body>
 </html>
