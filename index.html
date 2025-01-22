@@ -1,307 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="faviconn.png">
-<title>Portfolio</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background: url('https://m.media-amazon.com/images/I/41ioem0FmEL._AC_UF1000,1000_QL80_.jpg') no-repeat center center fixed;
-        background-size: cover;
-        color: #FFFFFF; /* Changed text color to black */
-    }
-    .container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding-bottom: 50px;
-        display: flex;
-        justify-content: center; /* Center horizontally */
-    }
-
-    .left-section {
-        flex: 5; /* Adjusted width of the left section */
-        background-color: rgba(0,0,0, 0.8);
-        padding: 20px;
-        border-radius: 8px;
-        color: #333;
-        font-size: 58px;
-        line-height: 1.5;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-    }
-    .left-section nav ul {
-        list-style-type: none;
-        padding: 0;
-    }
-    .left-section nav ul li {
-        margin-bottom: 10px;
-    }
-    .left-section nav ul li a {
-        color: #fff; /* Changed color for better visibility */
-        text-decoration: none;
-    }
-    .right-section {
-        flex: 20;
-        padding: 20px;
-        max-width: 320vw; /* Adjusted max-width */
-    }
-
-    .right-section > div {
-        background-color: rgba(0,0,0, 0.8);
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-    .profile-img {
-        display: block;
-        margin: 20px auto;
-        width: 200px;
-        border-radius: 50%;
-    }
-    .button-container {
-        text-align: center;
-        margin-top: 20px;
-    }
-    .button {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: rgba(0,0,0,, 0.3);
-        color: #fff;
-        text-decoration: none;
-        border: 2px solid #fff;
-        border-radius: 5px;
-        margin-right: 10px;
-    }
-    .button:hover {
-        background-color: rgba(0,0,0, 0.5);
-        color: #333;
-    }
-    .project {
-        margin-bottom: 20px;
-        text-align: center;
-    }
-    .project img {
-        max-width: 100%;
-        border-radius: 8px;
-    }
-    .project p {
-        color: #333;
-    }
-    footer {
-        background-color: rgba(51, 51, 51, 0.8);
-        text-align: center;
-        padding: 10px 0;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        font-size: 14px;
-        color: #fff;
-    }
-</style>
-<script>
-    // JavaScript to hide left-section and adjust right-section on mobile devices
-    window.onload = function() {
-        function adjustLayout() {
-            if (window.innerWidth < 1080) { // Screen width less than 1080 pixels
-                document.querySelector('.left-section').style.display = 'none';
-                document.querySelector('.right-section').style.flex = '1';
-                document.querySelector('.right-section').style.width = '100%';
-            } else {
-                document.querySelector('.left-section').style.display = 'flex';
-                document.querySelector('.right-section').style.flex = '20';
-            }
-        }
-        adjustLayout(); // Adjust on page load
-        window.onresize = adjustLayout; // Adjust on window resize
-    };
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="left-section">
-            <nav>
-                <ul>
-                    <li><a href="#about">About Me</a></li>
-                    <li><a href="#projects">Projects</a></li>
-                    <li><a href="#artworks">Artworks</a></li>
-                    <li><a href="#assets">Assets</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
+    <header>
+        <h1>My Portfolio</h1>
+    </header>
+    
+    <section id="about">
+        <img src="your-photo.jpg" alt="My Photo">
+        <p>Welcome to my portfolio! I'm a 3D modeler and digital artist.</p>
+        <div class="social-links">
+            <a href="https://github.com/yourprofile">GitHub</a>
+            <a href="https://www.artstation.com/yourprofile">ArtStation</a>
+            <a href="https://www.instagram.com/yourprofile">Instagram</a>
+            <a href="https://www.linkedin.com/in/yourprofile">LinkedIn</a>
         </div>
-        <div class="right-section">
-            <div id="about">
-                <h2>About Me</h2>
-                <div class="about-container">
-                    <img class="profile-img" src="https://media.licdn.com/dms/image/v2/D4E03AQEP-AYdooC57g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1703886195040?e=1736380800&v=beta&t=H1J6Ts6Nxf-9eW9zpzwTjqWTqCmgUx5Cfg-4O1XgRJY">
-                    <div align="center">
-                        <p>Hi, I’m Rüzgar, a Game Design student at Eastern Mediterranean University. I’m passionate about creating games, 3D modeling, and texturing. When I’m not working on projects, you’ll find me behind a camera, exploring new places, or glued to an F1 race cheering for Verstappen. I’ve lived in Texas for three months and traveled to Italy, Romania, and Bulgaria. My journey is just beginning, and I’m excited to see where it takes me next.</p>
-                        <p>Below, you can explore my 3D portfolio and GitHub</p>
-                    </div>
-                    <div class="button-container">
-                        <a href="https://www.linkedin.com/in/rzgry/" class="button" target="_blank" style="border: none;"><img src="https://img.icons8.com/?size=100&id=67570&format=png&color=000000" alt=""></a>
-<a href="https://rzrworks.itch.io" class="button" target="_blank" style="border: none;"><img src="https://img.icons8.com/?size=100&id=X3AesQt0TANm&format=png&color=000000" alt=""></a>
-<a href="https://www.artstation.com/rzrworks" class="button" target="_blank" style="border: none;"><img src="https://img.icons8.com/?size=100&id=O4C4q3fJBnAe&format=png&color=000000" alt=""></a>
-<a href="https://www.instagram.com/ruzzgar0/profilecard/?igsh=MW9iN2p0eGdoaG5pOA==" class="button" target="_blank" style="border: none;"><img src="https://img.icons8.com/?size=100&id=102339&format=png&color=000000" alt=""></a>
-
-                    </div>
-                </div>
-            </div>
-            <div id="projects">
-                <h2>My Projects</h2>
-                <div style="display: flex; justify-content: center;">
-                    <table>
-                        <tr>
-                            <td class="project">
-                                <a href="https://rzrworks.itch.io/veiled-island">
-                                    <img src="https://img.itch.zone/aW1nLzE1OTMwNDIzLnBuZw==/315x250%23c/Ot7Q%2BC.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="project">
-                                <a href="https://rzrworks.itch.io/gorilla-warfare">
-                                    <img src="https://img.itch.zone/aW1nLzE3NTI4NTY5LnBuZw==/315x250%23c/XOLPnE.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="project">
-                                <a href="https://rzrworks.itch.io/tower-jump">
-                                    <img src="https://img.itch.zone/aW1nLzE4OTkyMDYxLnBuZw==/315x250%23c/wW5Hf0.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="project">
-                                <a href="https://rzrworks.itch.io/supernova-galactus">
-                                    <img src="https://img.itch.zone/aW1nLzE1OTMwNDE4LnBuZw==/315x250%23c/DqMlpp.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="project">
-                                <a href="#">
-                                    <img src="project5_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="project">
-                                <a href="#">
-                                    <img src="project6_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-            <div id="artworks">
-                <div style="display: flex; justify-content: center; flex-wrap: wrap;">
-        <div style="width: 100%; text-align: center; margin-bottom: 20px;">
-           <!-- Video section -->
-                        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
-                            <iframe src="https://www.youtube.com/embed/-nCU_VR8kOY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
-                        </div>
-                    </div>
-
-        <table>
-            <tr>
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/n0KeX6">
-                        <img src="https://cdnb.artstation.com/p/assets/images/images/075/101/849/large/ruzgar-yalcin-untitled.jpg?1713774072" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/kQrm6K">
-                        <img src="https://cdna.artstation.com/p/assets/images/images/070/010/802/large/ruzgar-yalcin-lucifer2.jpg?1701537461" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/39w1mo">
-                        <img src="https://cdna.artstation.com/p/assets/images/images/062/569/496/large/ruzgar-yalcin-untitled-1.jpg?1683465361" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/vDA2m6">
-                        <img src="https://cdna.artstation.com/p/assets/images/images/059/244/030/large/ruzgar-yalcin-redbull.jpg?1675950689" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/eJGLZb">
-                        <img src="https://cdna.artstation.com/p/assets/images/images/059/089/528/large/ruzgar-yalcin-hangar1.jpg?1675624511" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/ArOKlN">
-                        <img src="https://cdnb.artstation.com/p/assets/images/images/057/450/913/large/ruzgar-yalcin-pikaaaa1920.jpg?1671628863" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
-            <div id="assets">
-                <h2>My Assets</h2>
-    <div style="display: flex; justify-content: center;">
-        <table>
-            <tr>
-                <td class="asset">
-                    <a href="https://rzrworks.itch.io/lowpoly-vehicle-pack">
-                        <img src="https://img.itch.zone/aW1nLzE0ODg2ODA3LnBuZw==/315x250%23c/RlNTgV.png" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="asset">
-                    <a href="https://rzrworks.itch.io/lowpoly-forest-pack">
-                        <img src="https://img.itch.zone/aW1nLzExNDk5ODE3LnBuZw==/315x250%23c/R0AJNe.png" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td class="asset">
-                    <a href="#">
-                        <img src="asset3_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="asset">
-                    <a href="#">
-                        <img src="asset4_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td class="asset">
-                    <a href="#">
-                        <img src="asset5_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="asset">
-                    <a href="#">
-                        <img src="asset6_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
+    </section>
+    
+    <section id="games">
+        <h2>Games</h2>
+        <div class="gallery">
+            <img src="game1.jpg" alt="Game 1">
+            <img src="game2.jpg" alt="Game 2">
+            <img src="game3.jpg" alt="Game 3">
+            <img src="game4.jpg" alt="Game 4">
         </div>
-    </div>
-    <footer>
-        &copy; 2024 Rüzgar Yalçın. All rights reserved.
-    </footer>
+    </section>
+    
+    <section id="artworks">
+        <h2>Artworks</h2>
+        <div class="gallery">
+            <img src="art1.jpg" alt="Artwork 1">
+            <img src="art2.jpg" alt="Artwork 2">
+            <img src="art3.jpg" alt="Artwork 3">
+            <img src="art4.jpg" alt="Artwork 4">
+            <img src="art5.jpg" alt="Artwork 5">
+            <img src="art6.jpg" alt="Artwork 6">
+        </div>
+    </section>
+    
+    <section id="video">
+        <h2>Featured Video</h2>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/your-video-id" frameborder="0" allowfullscreen></iframe>
+    </section>
 </body>
 </html>
