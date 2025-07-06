@@ -12,44 +12,21 @@
         padding: 0;
         background: url('https://m.media-amazon.com/images/I/41ioem0FmEL._AC_UF1000,1000_QL80_.jpg') no-repeat center center fixed;
         background-size: cover;
-        color: #FFFFFF; /* Changed text color to black */
+        color: #FFFFFF;
     }
+
     .container {
         max-width: 1400px;
         margin: 0 auto;
         padding-bottom: 50px;
         display: flex;
-        justify-content: center; /* Center horizontally */
+        justify-content: center;
     }
 
-    .left-section {
-        flex: 5; /* Adjusted width of the left section */
-        background-color: rgba(0,0,0, 0.8);
-        padding: 20px;
-        border-radius: 8px;
-        color: #333;
-        font-size: 58px;
-        line-height: 1.5;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-    }
-    .left-section nav ul {
-        list-style-type: none;
-        padding: 0;
-    }
-    .left-section nav ul li {
-        margin-bottom: 10px;
-    }
-    .left-section nav ul li a {
-        color: #fff; /* Changed color for better visibility */
-        text-decoration: none;
-    }
     .right-section {
-        flex: 20;
+        width: 100%;
+        max-width: 960px;
         padding: 20px;
-        max-width: 320vw; /* Adjusted max-width */
     }
 
     .right-section > div {
@@ -58,41 +35,49 @@
         border-radius: 8px;
         margin-bottom: 20px;
     }
+
     .profile-img {
         display: block;
         margin: 20px auto;
         width: 200px;
         border-radius: 50%;
     }
+
     .button-container {
         text-align: center;
         margin-top: 20px;
     }
+
     .button {
         display: inline-block;
         padding: 10px 20px;
-        background-color: rgba(0,0,0,, 0.3);
+        background-color: rgba(0,0,0, 0.3);
         color: #fff;
         text-decoration: none;
         border: 2px solid #fff;
         border-radius: 5px;
         margin-right: 10px;
     }
+
     .button:hover {
         background-color: rgba(0,0,0, 0.5);
         color: #333;
     }
-    .project {
+
+    .project, .artwork, .asset {
         margin-bottom: 20px;
         text-align: center;
     }
-    .project img {
+
+    .project img, .artwork img, .asset img {
         max-width: 100%;
         border-radius: 8px;
     }
+
     .project p {
         color: #333;
     }
+
     footer {
         background-color: rgba(51, 51, 51, 0.8);
         text-align: center;
@@ -124,22 +109,11 @@
 </head>
 <body>
     <div class="container">
-        <div class="left-section">
-            <nav>
-                <ul>
-                    <li><a href="#about">About Me</a></li>
-                    <li><a href="#projects">Projects</a></li>
-                    <li><a href="#artworks">Artworks</a></li>
-                    <li><a href="#assets">Assets</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
         <div class="right-section">
             <div id="about">
                 <h2>About Me</h2>
                 <div class="about-container">
-                    <img class="profile-img" src="https://media.licdn.com/dms/image/v2/D4E03AQEP-AYdooC57g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1703886195040?e=1736380800&v=beta&t=H1J6Ts6Nxf-9eW9zpzwTjqWTqCmgUx5Cfg-4O1XgRJY">
+                    <img class="profile-img" src="profile.png">
                     <div align="center">
                         <p>Hi, I’m Rüzgar, a Game Design student at Eastern Mediterranean University. I’m passionate about creating games, 3D modeling, and texturing. When I’m not working on projects, you’ll find me behind a camera, exploring new places, or glued to an F1 race cheering for Verstappen. I’ve lived in Texas for three months and traveled to Italy, Romania, and Bulgaria. My journey is just beginning, and I’m excited to see where it takes me next.</p>
                         <p>Below, you can explore my 3D portfolio and GitHub</p>
@@ -159,8 +133,8 @@
                     <table>
                         <tr>
                             <td class="project">
-                                <a href="https://rzrworks.itch.io/veiled-island">
-                                    <img src="https://img.itch.zone/aW1nLzE1OTMwNDIzLnBuZw==/315x250%23c/Ot7Q%2BC.png" style="max-width: 100%; height: auto;" alt="">
+                                <a href="https://rzrworks.itch.io/cheese-hunt">
+                                    <img src="https://img.itch.zone/aW1nLzIyMDEyMzgzLnBuZw==/315x250%23c/QS%2FouI.png" style="max-width: 100%; height: auto;" alt="">
                                 </a>
                             </td>
                             <td width="50"></td> <!-- Empty cell for spacing -->
@@ -185,8 +159,8 @@
                         </tr>
                         <tr>
                             <td class="project">
-                                <a href="#">
-                                    <img src="project5_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
+                                <a href="https://rzrworks.itch.io/veiled-island">
+                                    <img src="https://img.itch.zone/aW1nLzE1OTMwNDIzLnBuZw==/315x250%23c/Ot7Q%2BC.png" style="max-width: 100%; height: auto;" alt="">
                                 </a>
                             </td>
                             <td width="50"></td> <!-- Empty cell for spacing -->
@@ -201,6 +175,7 @@
             </div>
 
             <div id="artworks">
+                <h2>My Artworks</h2>
                 <div style="display: flex; justify-content: center; flex-wrap: wrap;">
         <div style="width: 100%; text-align: center; margin-bottom: 20px;">
            <!-- Video section -->
@@ -212,14 +187,14 @@
         <table>
             <tr>
                 <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/n0KeX6">
-                        <img src="https://cdnb.artstation.com/p/assets/images/images/075/101/849/large/ruzgar-yalcin-untitled.jpg?1713774072" style="max-width: 100%; height: auto;" alt="">
+                    <a href="https://www.artstation.com/artwork/kQrm6K">
+                        <img src="https://cdna.artstation.com/p/assets/images/images/070/010/802/large/ruzgar-yalcin-lucifer2.jpg?1701537461" style="max-width: 100%; height: auto;" alt="">
                     </a>
                 </td>
                 <td width="50"></td> <!-- Empty cell for spacing -->
                 <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/kQrm6K">
-                        <img src="https://cdna.artstation.com/p/assets/images/images/070/010/802/large/ruzgar-yalcin-lucifer2.jpg?1701537461" style="max-width: 100%; height: auto;" alt="">
+                    <a href="https://www.artstation.com/artwork/ArOKlN">
+                        <img src="https://cdnb.artstation.com/p/assets/images/images/057/450/913/large/ruzgar-yalcin-pikaaaa1920.jpg?1671628863" style="max-width: 100%; height: auto;" alt="">
                     </a>
                 </td>
             </tr>
@@ -240,14 +215,6 @@
                 <td class="artwork">
                     <a href="https://www.artstation.com/artwork/eJGLZb">
                         <img src="https://cdna.artstation.com/p/assets/images/images/059/089/528/large/ruzgar-yalcin-hangar1.jpg?1675624511" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/ArOKlN">
-                        <img src="https://cdnb.artstation.com/p/assets/images/images/057/450/913/large/ruzgar-yalcin-pikaaaa1920.jpg?1671628863" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
             </tr>
         </table>
     </div>
