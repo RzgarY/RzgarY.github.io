@@ -1,285 +1,567 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" href="faviconn.png">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1a1a1a">
-<title>Portfolio</title>
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rüzgar Yalçın — Game & 3D Portfolio</title>
+  <meta name="theme-color" content="#0a0a0a">
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="faviconn.png">
+
+  <style>
+    :root {
+      --bg: #fafafa;
+      --card: rgba(255,255,255,0.7);
+      --text: #0a0a0a;
+      --muted: #5b6472;
+      --border: rgba(15,23,42,0.12);
+      --pill: #f1f5f9;
+      --pill-text: #0f172a;
+      --accent: #0ea5e9;
+    }
+    .dark {
+      --bg: #0b0d10;
+      --card: rgba(17, 20, 24, 0.7);
+      --text: #e5e7eb;
+      --muted: #9aa4b2;
+      --border: rgba(100,116,139,0.2);
+      --pill: rgba(148,163,184,0.18);
+      --pill-text: #e5e7eb;
+      --accent: #38bdf8;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background: url('https://m.media-amazon.com/images/I/41ioem0FmEL._AC_UF1000,1000_QL80_.jpg') no-repeat center center fixed;
-        background-size: cover;
-        color: #FFFFFF;
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      letter-spacing: .2px;
     }
 
-    .container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding-bottom: 50px;
-        display: flex;
-        justify-content: center;
+    /* Apple-ish gradient background */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .blob {
+      position: absolute;
+      filter: blur(80px);
+      opacity: .55;
+      transform: translate(-50%, -50%);
+      will-change: transform;
+    }
+    .blob.one {
+      width: 900px; height: 900px; left: 50%; top: -10%;
+      background: radial-gradient(closest-side, rgba(180,200,255,.6), rgba(255,255,255,0));
+    }
+    .blob.two {
+      width: 700px; height: 700px; left: 5%; top: 45%;
+      background: conic-gradient(from 120deg at 50% 50%, rgba(168,85,247,.25), rgba(59,130,246,.25), rgba(16,185,129,.2), rgba(168,85,247,.25));
+      opacity: .45;
+    }
+    .blob.three {
+      width: 800px; height: 800px; right: -10%; bottom: -10%;
+      background: radial-gradient(closest-side, rgba(147,197,253,.35), rgba(255,255,255,0));
+      filter: blur(90px);
+      opacity: .4;
     }
 
-    .right-section {
-        width: 100%;
-        max-width: 960px;
-        padding: 20px;
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: color-mix(in oklab, var(--bg) 85%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      max-width: 1120px; margin: 0 auto; padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav a.brand {
+      display: inline-flex; align-items: center; gap: 8px; font-weight: 700; text-decoration: none; color: var(--text);
+    }
+    .nav a { color: var(--text); text-decoration: none; }
+    .nav .links { display:flex; align-items:center; gap: 10px; }
+    .nav .links a { font-size: 14px; opacity: .85; }
+    .btn {
+      border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--bg) 70%, transparent);
+      padding: 8px 12px; border-radius: 10px; font-weight: 600; cursor: pointer;
+      color: var(--text);
+    }
+    .btn.icon { padding: 8px; width: 36px; height: 36px; display: inline-grid; place-items: center; }
+
+    main { max-width: 1120px; margin: 0 auto; padding: 32px 16px 64px; }
+    .grid { display: grid; gap: 20px; }
+    @media (min-width: 768px) { .grid-2 { grid-template-columns: 1.4fr 1fr; } }
+    @media (min-width: 640px) { .grid-cards { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (min-width: 1024px) { .grid-cards { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.04);
+      overflow: hidden;
+    }
+    .card .content { padding: 18px; }
+    .muted { color: var(--muted); }
+
+    h1 { font-size: clamp(28px, 4vw, 42px); line-height: 1.1; margin: 0 0 6px; }
+    h2 { font-size: clamp(22px, 3vw, 28px); margin: 0 0 12px; }
+    .kicker { font-size: 13px; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); }
+
+    .hero-img {
+      aspect-ratio: 1 / 1; width: 100%; object-fit: cover;
+      border-radius: 16px; border: 1px solid var(--border);
+      background: color-mix(in oklab, var(--bg) 50%, transparent);
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .chip {
+      font-size: 12px; padding: 6px 10px; border-radius: 999px; background: var(--pill); color: var(--pill-text);
+      border: 1px solid var(--border);
     }
 
-    .right-section > div {
-        background-color: rgba(0,0,0, 0.8);
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .tabs { display: inline-flex; gap: 6px; padding: 4px; background: var(--pill); border: 1px solid var(--border); border-radius: 12px; }
+    .tab { padding: 6px 10px; border-radius: 10px; cursor: pointer; font-size: 13px; opacity: .8; }
+    .tab.active { background: var(--bg); border: 1px solid var(--border); opacity: 1; }
+    .search { position: relative; }
+    .search input {
+      width: min(320px, 70vw);
+      border-radius: 12px; border: 1px solid var(--border);
+      padding: 10px 12px 10px 36px; background: var(--bg); color: var(--text);
     }
+    .search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: .6; }
 
-    .profile-img {
-        display: block;
-        margin: 20px auto;
-        width: 200px;
-        border-radius: 50%;
-    }
+    .thumb { aspect-ratio: 16 / 9; width: 100%; object-fit: cover; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 18px 18px; }
+    .btn-link { font-size: 13px; text-decoration: none; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--border); display: inline-flex; align-items: center; gap: 8px; color: var(--text); background: var(--bg); }
+    .btn-link:hover { outline: 2px solid color-mix(in oklab, var(--accent) 30%, transparent); }
 
-    .button-container {
-        text-align: center;
-        margin-top: 20px;
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0; display: none; place-items: center; background: rgba(0,0,0,.65);
+      z-index: 100;
     }
-
-    .button {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: rgba(0,0,0, 0.3);
-        color: #fff;
-        text-decoration: none;
-        border: 2px solid #fff;
-        border-radius: 5px;
-        margin-right: 10px;
+    .lightbox.open { display: grid; }
+    .lightbox-inner {
+      width: min(1000px, 92vw); max-height: 88vh; overflow: auto; background: var(--bg); color: var(--text);
+      border: 1px solid var(--border); border-radius: 14px;
     }
-
-    .button:hover {
-        background-color: rgba(0,0,0, 0.5);
-        color: #333;
-    }
-
-    .project, .artwork, .asset {
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-    .project img, .artwork img, .asset img {
-        max-width: 100%;
-        border-radius: 8px;
-    }
-
-    .project p {
-        color: #333;
-    }
+    .lightbox-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .lightbox-body { padding: 16px; }
+    .gallery { display: grid; gap: 10px; }
+    @media (min-width: 640px) { .gallery { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    .gallery img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 12px; border: 1px solid var(--border); }
 
     footer {
-        background-color: rgba(51, 51, 51, 0.8);
-        text-align: center;
-        padding: 10px 0;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        font-size: 14px;
-        color: #fff;
+      border-top: 1px solid var(--border);
+      margin-top: 36px;
     }
-</style>
-<script>
-    // JavaScript to hide left-section and adjust right-section on mobile devices
-    window.onload = function() {
-        function adjustLayout() {
-            if (window.innerWidth < 1080) { // Screen width less than 1080 pixels
-                document.querySelector('.left-section').style.display = 'none';
-                document.querySelector('.right-section').style.flex = '1';
-                document.querySelector('.right-section').style.width = '100%';
-            } else {
-                document.querySelector('.left-section').style.display = 'flex';
-                document.querySelector('.right-section').style.flex = '20';
-            }
-        }
-        adjustLayout(); // Adjust on page load
-        window.onresize = adjustLayout; // Adjust on window resize
-    };
-</script>
+    footer .inner {
+      max-width: 1120px; margin: 0 auto; padding: 18px 16px; font-size: 14px; color: var(--muted);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="right-section">
-            <div id="about">
-                <h2>About Me</h2>
-                <div class="about-container">
-                    <img class="profile-img" src="profile.png">
-                    <div align="center">
-                        <p>Hi, I’m Rüzgar, a Game Design student at Eastern Mediterranean University. I’m passionate about creating games, 3D modeling, and texturing. When I’m not working on projects, you’ll find me behind a camera, exploring new places, or glued to an F1 race cheering for Verstappen. I’ve lived in Texas for three months and traveled to Italy, Romania, and Bulgaria. My journey is just beginning, and I’m excited to see where it takes me next.</p>
-                        <p>Below, you can explore my 3D portfolio and GitHub</p>
-                    </div>
-                    <div class="button-container">
-                        <a href="https://www.linkedin.com/in/rzgry/" class="button" target="_blank" style="border: none;"><img src="https://img.icons8.com/?size=100&id=67570&format=png&color=000000" alt=""></a>
-<a href="https://rzrworks.itch.io" class="button" target="_blank" style="border: none;"><img src="https://img.icons8.com/?size=100&id=X3AesQt0TANm&format=png&color=000000" alt=""></a>
-<a href="https://www.artstation.com/rzrworks" class="button" target="_blank" style="border: none;"><img src="https://img.icons8.com/?size=100&id=O4C4q3fJBnAe&format=png&color=000000" alt=""></a>
-<a href="https://www.instagram.com/ruzzgar0/profilecard/?igsh=MW9iN2p0eGdoaG5pOA==" class="button" target="_blank" style="border: none;"><img src="https://img.icons8.com/?size=100&id=102339&format=png&color=000000" alt=""></a>
+  <div class="backdrop">
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+    <div class="blob three"></div>
+  </div>
 
-                    </div>
-                </div>
-            </div>
-            <div id="projects">
-                <h2>My Projects</h2>
-                <div style="display: flex; justify-content: center;">
-                    <table>
-                        <tr>
-                            <td class="project">
-                                <a href="https://rzrworks.itch.io/dustyrally">
-                                    <img src="https://img.itch.zone/aW1nLzIyMTcxMzUwLnBuZw==/315x250%23c/FYKwYx.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="project">
-                                <a href="https://rzrworks.itch.io/gorilla-warfare">
-                                    <img src="https://img.itch.zone/aW1nLzE3NTI4NTY5LnBuZw==/315x250%23c/XOLPnE.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="project">
-                                <a href="https://rzrworks.itch.io/tower-jump">
-                                    <img src="https://img.itch.zone/aW1nLzE4OTkyMDYxLnBuZw==/315x250%23c/wW5Hf0.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="project">
-                                <a href="https://rzrworks.itch.io/supernova-galactus">
-                                    <img src="https://img.itch.zone/aW1nLzE1OTMwNDE4LnBuZw==/315x250%23c/DqMlpp.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="project">
-                                <a href="https://rzrworks.itch.io/veiled-island">
-                                    <img src="https://img.itch.zone/aW1nLzE1OTMwNDIzLnBuZw==/315x250%23c/Ot7Q%2BC.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                            <td width="50"></td> <!-- Empty cell for spacing -->
-                            <td class="project">
-                                <a href="https://rzrworks.itch.io/cheese-hunt">
-                                    <img src="https://img.itch.zone/aW1nLzIyMDEyMzgzLnBuZw==/315x250%23c/QS%2FouI.png" style="max-width: 100%; height: auto;" alt="">
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-            <div id="artworks">
-                <h2>My Artworks</h2>
-                <div style="display: flex; justify-content: center; flex-wrap: wrap;">
-        <div style="width: 100%; text-align: center; margin-bottom: 20px;">
-           <!-- Video section -->
-                        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
-                            <iframe src="https://www.youtube.com/embed/-nCU_VR8kOY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
-                        </div>
-                    </div>
-
-        <table>
-            <tr>
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/kQrm6K">
-                        <img src="https://cdna.artstation.com/p/assets/images/images/070/010/802/large/ruzgar-yalcin-lucifer2.jpg?1701537461" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/ArOKlN">
-                        <img src="https://cdnb.artstation.com/p/assets/images/images/057/450/913/large/ruzgar-yalcin-pikaaaa1920.jpg?1671628863" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/39w1mo">
-                        <img src="https://cdna.artstation.com/p/assets/images/images/062/569/496/large/ruzgar-yalcin-untitled-1.jpg?1683465361" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/vDA2m6">
-                        <img src="https://cdna.artstation.com/p/assets/images/images/059/244/030/large/ruzgar-yalcin-redbull.jpg?1675950689" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td class="artwork">
-                    <a href="https://www.artstation.com/artwork/eJGLZb">
-                        <img src="https://cdna.artstation.com/p/assets/images/images/059/089/528/large/ruzgar-yalcin-hangar1.jpg?1675624511" style="max-width: 100%; height: auto;" alt="">
-            </tr>
-        </table>
+  <header>
+    <div class="nav">
+      <a href="#home" class="brand">
+        <img src="icon-192.png" alt="" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);" />
+        <span>Rüzgar Yalçın</span>
+      </a>
+      <div class="links">
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a class="btn" href="cv.pdf" download>Download CV</a>
+        <button class="btn icon" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+          <svg id="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+          </svg>
+        </button>
+      </div>
     </div>
-</div>
-            <div id="assets">
-                <h2>My Assets</h2>
-    <div style="display: flex; justify-content: center;">
-        <table>
-            <tr>
-                <td class="asset">
-                    <a href="https://rzrworks.itch.io/lowpoly-vehicle-pack">
-                        <img src="https://img.itch.zone/aW1nLzE0ODg2ODA3LnBuZw==/315x250%23c/RlNTgV.png" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="asset">
-                    <a href="https://rzrworks.itch.io/lowpoly-forest-pack">
-                        <img src="https://img.itch.zone/aW1nLzExNDk5ODE3LnBuZw==/315x250%23c/R0AJNe.png" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td class="asset">
-                    <a href="#">
-                        <img src="asset3_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="asset">
-                    <a href="#">
-                        <img src="asset4_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td class="asset">
-                    <a href="#">
-                        <img src="asset5_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-                <td width="50"></td> <!-- Empty cell for spacing -->
-                <td class="asset">
-                    <a href="#">
-                        <img src="asset6_image_url.jpg" style="max-width: 100%; height: auto;" alt="">
-                    </a>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section id="home" class="grid grid-2" style="gap:24px; margin-top: 12px;">
+      <div class="card">
+        <div class="content">
+          <div class="kicker">Game Designer • 3D Modeler</div>
+          <h1>I build stylized games and clean, mid‑poly 3D assets.</h1>
+          <p class="muted">
+            I work in Unity and handle modeling and texturing, with an interest in racing game feel. I like making projects that are polished, easy to pick up, and fun to play.
+          </p>
+          <div class="chips" id="skills"></div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+            <a class="btn" href="#projects">See Work</a>
+            <a class="btn" href="#contact">Contact</a>
+          </div>
+
+          <div class="chips" style="margin-top:14px; font-size:14px;">
+            <span class="muted">Türkiye •</span>
+            <a class="muted" href="https://www.linkedin.com/in/rzgry/" target="_blank" rel="noopener">LinkedIn</a>
+            <span class="muted">•</span>
+            <a class="muted" href="https://rzrworks.itch.io" target="_blank" rel="noopener">itch.io</a>
+            <span class="muted">•</span>
+            <a class="muted" href="https://www.artstation.com/rzrworks" target="_blank" rel="noopener">ArtStation</a>
+            <span class="muted">•</span>
+            <a class="muted" href="https://www.instagram.com/ruzzgar0/profilecard/?igsh=MW9iN2p0eGdoaG5pOA==" target="_blank" rel="noopener">Instagram</a>
+          </div>
         </div>
-    </div>
-    <footer>
-        &copy; 2024 Rüzgar Yalçın. All rights reserved.
-    </footer>
+      </div>
+      <div class="card">
+        <div class="content">
+          <img src="profile.png" alt="Portrait" class="hero-img" />
+        </div>
+      </div>
+    </section>
 
-    <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("sw.js")
-          .then(() => console.log("Service Worker registered"))
-          .catch(err => console.log("Service Worker registration failed:", err));
-      }
-    </script>
+    <!-- ABOUT + SHOWREEL -->
+    <section id="about" style="margin-top: 24px;">
+      <div class="grid" style="gap:24px;">
+        <div class="card">
+          <div class="content">
+            <h2>About</h2>
+            <p class="muted">
+              I’m a game designer and 3D artist who enjoys building stylized visuals with clean, mid‑poly assets.
+              I work in Unity and handle modeling, texturing, and basic animation, with a special interest in racing game design and feel.
+              I like creating games that are polished, fun to play, and easy to pick up.
+            </p>
+            <div style="margin-top:12px">
+              <a class="btn" href="cv.pdf" download>Download CV</a>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="content">
+            <h2>Showreel</h2>
+            <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; border:1px solid var(--border);">
+              <iframe src="https://www.youtube.com/embed/-nCU_VR8kOY"
+                title="YouTube video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                style="position:absolute; inset:0; width:100%; height:100%; border:0;"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <section id="projects" style="margin-top: 24px;">
+      <div class="toolbar">
+        <div>
+          <h2 style="margin:0;">Work</h2>
+          <div class="muted" style="font-size:13px;">Filter by Games or Art/Assets. Search by tags/engine/platform.</div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <div class="tabs" id="tabs">
+            <button class="tab active" data-kind="all">All</button>
+            <button class="tab" data-kind="game">Games</button>
+            <button class="tab" data-kind="model">Art & Assets</button>
+          </div>
+          <div class="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+            <input id="searchInput" type="text" placeholder="Search titles, tags, engines..." />
+          </div>
+          <button class="btn" id="resetBtn">Reset</button>
+        </div>
+      </div>
+
+      <div id="tagRow" class="chips" style="margin-bottom: 8px;"></div>
+
+      <div id="cards" class="grid grid-cards"></div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" style="margin-top: 32px;">
+      <div class="grid" style="gap:24px;">
+        <div class="card">
+          <div class="content">
+            <h2>Contact</h2>
+            <div class="muted" style="margin-bottom:8px;">DM me on socials or send a quick email.</div>
+            <form id="contactForm">
+              <div style="display:grid; gap:10px; max-width:520px;">
+                <input type="text" id="cName" placeholder="Your name" style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);" />
+                <input type="email" id="cFrom" placeholder="you@domain.com" style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);" />
+                <textarea id="cMsg" placeholder="Tell me about your project..." rows="5" style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);"></textarea>
+                <div style="display:flex;justify-content:flex-end;">
+                  <button class="btn" type="submit">Send</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="content">
+            <h2>Links</h2>
+            <div class="grid" style="gap:10px;">
+              <a class="btn-link" href="https://www.linkedin.com/in/rzgry/" target="_blank" rel="noopener">LinkedIn</a>
+              <a class="btn-link" href="https://rzrworks.itch.io" target="_blank" rel="noopener">itch.io</a>
+              <a class="btn-link" href="https://www.artstation.com/rzrworks" target="_blank" rel="noopener">ArtStation</a>
+              <a class="btn-link" href="https://www.instagram.com/ruzzgar0/profilecard/?igsh=MW9iN2p0eGdoaG5pOA==" target="_blank" rel="noopener">Instagram</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="inner">
+      <span>© <span id="year"></span> Rüzgar Yalçın. Built with vanilla HTML/CSS/JS.</span>
+      <a href="#home" style="text-decoration:none;color:var(--muted);">Back to top</a>
+    </div>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-inner">
+      <div class="lightbox-head">
+        <div>
+          <strong id="lbTitle">Title</strong>
+          <div id="lbSubtitle" class="muted" style="font-size:13px;"></div>
+        </div>
+        <button class="btn icon" id="lbClose" aria-label="Close">✕</button>
+      </div>
+      <div class="lightbox-body">
+        <div id="lbGallery" class="gallery"></div>
+        <div id="lbChips" class="chips" style="margin-top:12px;"></div>
+        <div id="lbLinks" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Data (from your current site) ---
+    const DATA = {
+      skills: ["Game Design","Level Design","Unity","Blender","Substance Painter","Marmoset Toolbag","UI/UX"],
+      projects: [
+        // Games
+        { id:"dusty-rally", kind:"game", title:"Dusty Rally", subtitle:"PS2-style time-attack rally", description:"Skill-driven rally prototype with leaderboard timing and PS2-inspired look.", cover:"https://img.itch.zone/aW1nLzIyMTcxMzUwLnBuZw==/315x250%23c/FYKwYx.png", media:[{src:"https://img.itch.zone/aW1nLzIyMTcxMzUwLnBuZw==/original/6v8wXL.png"}], engines:["Unity"], roles:["Game Design","Tech Art","UI/UX"], platforms:["PC","Mobile"], tags:["Racing","Stylized","PS2"], year:2025, links:{ itch:"https://rzrworks.itch.io/dustyrally" } },
+        { id:"gorilla-warfare", kind:"game", title:"Gorilla Warfare", subtitle:"Top-down action", description:"Arcade prototype with fast rounds and simple controls.", cover:"https://img.itch.zone/aW1nLzE3NTI4NTY5LnBuZw==/315x250%23c/XOLPnE.png", engines:["Unity"], roles:["Game Design","3D Art"], platforms:["PC","Web"], tags:["Action"], links:{ itch:"https://rzrworks.itch.io/gorilla-warfare" } },
+        { id:"tower-jump", kind:"game", title:"Tower Jump", subtitle:"Vertical runner", description:"Mobile-friendly jumping prototype.", cover:"https://img.itch.zone/aW1nLzE4OTkyMDYxLnBuZw==/315x250%23c/wW5Hf0.png", engines:["Unity"], roles:["Game Design"], platforms:["Mobile","Web"], tags:["Arcade"], links:{ itch:"https://rzrworks.itch.io/tower-jump" } },
+        { id:"supernova-galactus", kind:"game", title:"Supernova Galactus", subtitle:"Shooter prototype", description:"Space-themed shooter experiment.", cover:"https://img.itch.zone/aW1nLzE1OTMwNDE4LnBuZw==/315x250%23c/DqMlpp.png", engines:["Unity"], roles:["Game Design"], platforms:["PC","Web"], tags:["Shooter"], links:{ itch:"https://rzrworks.itch.io/supernova-galactus" } },
+        { id:"veiled-island", kind:"game", title:"Veiled Island", subtitle:"Atmospheric prototype", description:"Short walking/exploration slice.", cover:"https://img.itch.zone/aW1nLzE1OTMwNDIzLnBuZw==/315x250%23c/Ot7Q%2BC.png", engines:["Unity"], roles:["Design","Art"], platforms:["PC"], tags:["Exploration"], links:{ itch:"https://rzrworks.itch.io/veiled-island" } },
+        { id:"cheese-hunt", kind:"game", title:"Cheese Hunt", subtitle:"Collect & survive", description:"Light survival/collect prototype.", cover:"https://img.itch.zone/aW1nLzIyMDEyMzgzLnBuZw==/315x250%23c/QS%2FouI.png", engines:["Unity"], roles:["Design","Programming"], platforms:["PC","Web"], tags:["Survival"], links:{ itch:"https://rzrworks.itch.io/cheese-hunt" } },
+
+        // Artworks (as models)
+        { id:"lucifer-illustration", kind:"model", title:"Lucifer Illustration", subtitle:"Personal artwork", description:"Digital painting explorations.", cover:"https://cdna.artstation.com/p/assets/images/images/070/010/802/large/ruzgar-yalcin-lucifer2.jpg?1701537461", links:{ artstation:"https://www.artstation.com/artwork/kQrm6K" }, tags:["Illustration"] },
+        { id:"pika-illustration", kind:"model", title:"Pika Illustration", subtitle:"Fan art", description:"Stylized character piece.", cover:"https://cdnb.artstation.com/p/assets/images/images/057/450/913/large/ruzgar-yalcin-pikaaaa1920.jpg?1671628863", links:{ artstation:"https://www.artstation.com/artwork/ArOKlN" }, tags:["Illustration"] },
+        { id:"untitled-1", kind:"model", title:"Untitled Concept", subtitle:"Hard-surface practice", description:"Lighting and comp study.", cover:"https://cdna.artstation.com/p/assets/images/images/062/569/496/large/ruzgar-yalcin-untitled-1.jpg?1683465361", links:{ artstation:"https://www.artstation.com/artwork/39w1mo" }, tags:["Concept"] },
+        { id:"redbull-piece", kind:"model", title:"Red Bull Render", subtitle:"Product viz", description:"Material & lighting exercise.", cover:"https://cdna.artstation.com/p/assets/images/images/059/244/030/large/ruzgar-yalcin-redbull.jpg?1675950689", links:{ artstation:"https://www.artstation.com/artwork/vDA2m6" }, tags:["Product Viz"] },
+        { id:"hangar-scene", kind:"model", title:"Hangar Scene", subtitle:"Environment concept", description:"Scale & atmosphere test.", cover:"https://cdna.artstation.com/p/assets/images/images/059/089/528/large/ruzgar-yalcin-hangar1.jpg?1675624511", links:{ artstation:"https://www.artstation.com/artwork/eJGLZb" }, tags:["Environment"] },
+
+        // Assets
+        { id:"lowpoly-vehicle-pack", kind:"model", title:"Low‑Poly Vehicle Pack", subtitle:"Game-ready cars", description:"Optimized vehicles for stylized games.", cover:"https://img.itch.zone/aW1nLzE0ODg2ODA3LnBuZw==/315x250%23c/RlNTgV.png", tags:["Asset Pack","Vehicle"], links:{ itch:"https://rzrworks.itch.io/lowpoly-vehicle-pack" } },
+        { id:"lowpoly-forest-pack", kind:"model", title:"Low‑Poly Forest Pack", subtitle:"Modular environment pack", description:"Lightweight props for mobile and PC.", cover:"https://img.itch.zone/aW1nLzExNDk5ODE3LnBuZw==/315x250%23c/R0AJNe.png", tags:["Asset Pack","Environment"], links:{ itch:"https://rzrworks.itch.io/lowpoly-forest-pack" } },
+      ]
+    };
+
+    // --- Theme ---
+    const themeBtn = document.getElementById('themeBtn');
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.body.classList.add('dark');
+    }
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Skills
+    const skillWrap = document.getElementById('skills');
+    DATA.skills.forEach(s => {
+      const span = document.createElement('span');
+      span.className = 'chip';
+      span.textContent = s;
+      skillWrap.appendChild(span);
+    });
+
+    // Build tag list
+    const allTags = Array.from(new Set(DATA.projects.flatMap(p => p.tags || []))).sort((a,b)=>a.localeCompare(b));
+    const tagRow = document.getElementById('tagRow');
+    const activeTags = new Set();
+    allTags.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = `#${t}`;
+      btn.addEventListener('click', () => {
+        if (activeTags.has(t)) activeTags.delete(t); else activeTags.add(t);
+        renderCards();
+        // visual feedback
+        btn.style.outline = activeTags.has(t) ? '2px solid var(--accent)' : 'none';
+      });
+      tagRow.appendChild(btn);
+    });
+
+    // Tabs & search
+    const tabs = document.querySelectorAll('.tab');
+    let activeKind = 'all';
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeKind = tab.dataset.kind;
+      renderCards();
+    }));
+
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', renderCards);
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      searchInput.value = '';
+      activeKind = 'all';
+      tabs.forEach(t => t.classList.remove('active'));
+      tabs[0].classList.add('active');
+      activeTags.clear();
+      Array.from(tagRow.children).forEach(c => c.style.outline = 'none');
+      renderCards();
+    });
+
+    // Cards
+    const cards = document.getElementById('cards');
+
+    function cardHTML(p) {
+      const year = p.year ? `<span class="muted" style="font-size:12px;">${p.year}</span>` : '';
+      const desc = p.description ? `<p class="muted" style="margin:6px 0 0">${p.description}</p>` : '';
+      const tags = (p.tags || []).slice(0,3).map(t => `<span class="chip">${t}</span>`).join(' ');
+      const engines = (p.engines || []).slice(0,2).map(e => `<span class="chip">${e}</span>`).join(' ');
+      const left = `
+        ${tags}
+        ${engines}
+      `;
+      const links = [];
+      if (p.links?.github) links.push(`<a class="btn-link" href="${p.links.github}" target="_blank" rel="noopener">GitHub</a>`);
+      if (p.links?.itch) links.push(`<a class="btn-link" href="${p.links.itch}" target="_blank" rel="noopener">Play</a>`);
+      if (p.links?.artstation) links.push(`<a class="btn-link" href="${p.links.artstation}" target="_blank" rel="noopener">ArtStation</a>`);
+      if (p.links?.video) links.push(`<a class="btn-link" href="${p.links.video}" target="_blank" rel="noopener">Video</a>`);
+      return `
+        <div class="card">
+          <img class="thumb" src="${p.cover}" alt="${p.title} cover" />
+          <div class="content">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <strong style="font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.title}</strong>
+              ${year}
+            </div>
+            ${p.subtitle ? `<div class="muted" style="font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.subtitle}</div>` : ''}
+            ${desc}
+            <div class="chips" style="margin-top:8px;">${left}</div>
+          </div>
+          <div class="card-footer">
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">${links.join('')}</div>
+            <button class="btn" data-view="${p.id}">View</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function matches(p, q) {
+      if (!q) return true;
+      const hay = [p.title, p.subtitle, p.description, ...(p.tags||[]), ...(p.engines||[]), ...(p.roles||[]), ...(p.platforms||[])].join(' ').toLowerCase();
+      return hay.includes(q.toLowerCase());
+    }
+
+    function passesTags(p) {
+      if (activeTags.size === 0) return true;
+      const tags = new Set(p.tags || []);
+      for (const t of activeTags) if (!tags.has(t)) return false;
+      return true;
+    }
+
+    function renderCards() {
+      const q = searchInput.value.trim();
+      const items = DATA.projects
+        .filter(p => activeKind === 'all' ? true : p.kind === activeKind)
+        .filter(p => matches(p, q))
+        .filter(p => passesTags(p));
+
+      cards.innerHTML = items.map(cardHTML).join('');
+
+      // attach lightbox openers
+      cards.querySelectorAll('button[data-view]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = DATA.projects.find(x => x.id === btn.getAttribute('data-view'));
+          if (p) openLightbox(p);
+        });
+      });
+    }
+    renderCards();
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lbTitle = document.getElementById('lbTitle');
+    const lbSubtitle = document.getElementById('lbSubtitle');
+    const lbGallery = document.getElementById('lbGallery');
+    const lbChips = document.getElementById('lbChips');
+    const lbLinks = document.getElementById('lbLinks');
+    const lbClose = document.getElementById('lbClose');
+
+    function openLightbox(p) {
+      lbTitle.textContent = p.title;
+      lbSubtitle.textContent = p.subtitle || '';
+      lbGallery.innerHTML = (p.media && p.media.length ? p.media : [{src: p.cover}])
+        .map(m => `<img src="${m.src}" alt="${p.title}">`).join('');
+      lbChips.innerHTML = ''
+        + (p.tags||[]).map(t => `<span class="chip">${t}</span>`).join(' ')
+        + (p.engines||[]).map(e => `<span class="chip">${e}</span>`).join(' ')
+        + (p.platforms||[]).map(pl => `<span class="chip">${pl}</span>`).join(' ');
+      const links = [];
+      if (p.links?.github) links.push(`<a class="btn-link" href="${p.links.github}" target="_blank" rel="noopener">GitHub</a>`);
+      if (p.links?.itch) links.push(`<a class="btn-link" href="${p.links.itch}" target="_blank" rel="noopener">Play</a>`);
+      if (p.links?.artstation) links.push(`<a class="btn-link" href="${p.links.artstation}" target="_blank" rel="noopener">ArtStation</a>`);
+      if (p.links?.website) links.push(`<a class="btn-link" href="${p.links.website}" target="_blank" rel="noopener">Site</a>`);
+      if (p.links?.video) links.push(`<a class="btn-link" href="${p.links.video}" target="_blank" rel="noopener">Video</a>`);
+      lbLinks.innerHTML = links.join('');
+      lightbox.classList.add('open');
+    }
+    lbClose.addEventListener('click', () => lightbox.classList.remove('open'));
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) lightbox.classList.remove('open');
+    });
+
+    // Contact (mailto)
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('cName').value || '(no name)';
+      const from = document.getElementById('cFrom').value || '(no email)';
+      const msg = document.getElementById('cMsg').value || '';
+      const subject = encodeURIComponent(`Portfolio inquiry from ${name}`);
+      const body = encodeURIComponent(`${msg}\n\nSender: ${from}`);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    });
+
+    // Register service worker (keep your original file)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  </script>
 </body>
 </html>
