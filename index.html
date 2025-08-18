@@ -191,6 +191,15 @@
 /* Viewer'ı biraz daha yüksek yap */
 .embed-wrap { padding-bottom: 62.5%; } /* 56.25% (16:9) yerine ~16:10 */
   </style>
+  <script>
+/* TEMP: old SW'yi ve CacheStorage'ı tamamen kaldır */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+  if (window.caches && caches.keys) {
+    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+  }
+}
+</script>
 </head>
 <body>
   <div class="backdrop">
@@ -564,9 +573,9 @@
     });
 
     // Register service worker (keep your original file)
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    }
+    //if ('serviceWorker' in navigator) {
+      //navigator.serviceWorker.register('sw.js').catch(() => {});
+    //}
   </script>
 </body>
 </html>
