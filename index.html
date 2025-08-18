@@ -163,6 +163,16 @@
     @media (min-width: 640px) { .gallery { grid-template-columns: repeat(2, minmax(0,1fr)); } }
     .gallery img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 12px; border: 1px solid var(--border); }
 
+    /* Responsive iframe wrapper for embeds */
+    .embed-wrap{
+      position:relative; padding-bottom:56.25%; height:0;
+      overflow:hidden; border-radius:12px; border:1px solid var(--border);
+      background: var(--bg);
+    }
+    .embed-wrap iframe{
+      position:absolute; inset:0; width:100%; height:100%; border:0;
+    }
+
     footer {
       border-top: 1px solid var(--border);
       margin-top: 36px;
@@ -171,6 +181,15 @@
       max-width: 1120px; margin: 0 auto; padding: 18px 16px; font-size: 14px; color: var(--muted);
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
     }
+     /* Lightbox'u genişlet */
+.lightbox-inner { width: min(1050px, 95vw); }
+
+/* Embed açıkken galeri tek kolona düşsün ve tam genişlik olsun */
+.gallery.single { grid-template-columns: 1fr !important; }
+.gallery .embed-wrap { grid-column: 1 / -1; }
+
+/* Viewer'ı biraz daha yüksek yap */
+.embed-wrap { padding-bottom: 62.5%; } /* 56.25% (16:9) yerine ~16:10 */
   </style>
 </head>
 <body>
@@ -189,8 +208,7 @@
       <div class="links">
         <a href="#projects">Projects</a>
         <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-        <a class="btn" href="cv.pdf" download>Download CV</a>
+        <a class="btn" href="resume.pdf" download>Download Resume</a>
         <button class="btn icon" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
           <svg id="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="4"></circle>
@@ -207,7 +225,7 @@
       <div class="card">
         <div class="content">
           <div class="kicker">Game Designer • 3D Modeler</div>
-          <h1>I build stylized games and clean, mid‑poly 3D assets.</h1>
+          <h1>I build stylized games and clean, low-poly 3D assets.</h1>
           <p class="muted">
             I work in Unity and handle modeling and texturing, with an interest in racing game feel. I like making projects that are polished, easy to pick up, and fun to play.
           </p>
@@ -215,7 +233,6 @@
 
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
             <a class="btn" href="#projects">See Work</a>
-            <a class="btn" href="#contact">Contact</a>
           </div>
 
           <div class="chips" style="margin-top:14px; font-size:14px;">
@@ -244,12 +261,12 @@
           <div class="content">
             <h2>About</h2>
             <p class="muted">
-              I’m a game designer and 3D artist who enjoys building stylized visuals with clean, mid‑poly assets.
+              I’m a game designer and 3D artist who enjoys building stylized visuals with clean, mid-poly assets.
               I work in Unity and handle modeling, texturing, and basic animation, with a special interest in racing game design and feel.
               I like creating games that are polished, fun to play, and easy to pick up.
             </p>
             <div style="margin-top:12px">
-              <a class="btn" href="cv.pdf" download>Download CV</a>
+              <a class="btn" href="resume.pdf" download>Download Resume</a>
             </div>
           </div>
         </div>
@@ -296,40 +313,6 @@
 
       <div id="cards" class="grid grid-cards"></div>
     </section>
-
-    <!-- CONTACT -->
-    <section id="contact" style="margin-top: 32px;">
-      <div class="grid" style="gap:24px;">
-        <div class="card">
-          <div class="content">
-            <h2>Contact</h2>
-            <div class="muted" style="margin-bottom:8px;">DM me on socials or send a quick email.</div>
-            <form id="contactForm">
-              <div style="display:grid; gap:10px; max-width:520px;">
-                <input type="text" id="cName" placeholder="Your name" style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);" />
-                <input type="email" id="cFrom" placeholder="you@domain.com" style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);" />
-                <textarea id="cMsg" placeholder="Tell me about your project..." rows="5" style="padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);"></textarea>
-                <div style="display:flex;justify-content:flex-end;">
-                  <button class="btn" type="submit">Send</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="content">
-            <h2>Links</h2>
-            <div class="grid" style="gap:10px;">
-              <a class="btn-link" href="https://www.linkedin.com/in/rzgry/" target="_blank" rel="noopener">LinkedIn</a>
-              <a class="btn-link" href="https://rzrworks.itch.io" target="_blank" rel="noopener">itch.io</a>
-              <a class="btn-link" href="https://www.artstation.com/rzrworks" target="_blank" rel="noopener">ArtStation</a>
-              <a class="btn-link" href="https://www.instagram.com/ruzzgar0/profilecard/?igsh=MW9iN2p0eGdoaG5pOA==" target="_blank" rel="noopener">Instagram</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer>
@@ -358,9 +341,9 @@
   </div>
 
   <script>
-    // --- Data (from your current site) ---
+    // --- Data ---
     const DATA = {
-      skills: ["Game Design","Level Design","Unity","Blender","Substance Painter","Marmoset Toolbag","UI/UX"],
+      skills: ["Game Design","3D Modeling","Unity","Blender","Substance Painter"],
       projects: [
         // Games
         { id:"dusty-rally", kind:"game", title:"Dusty Rally", subtitle:"PS2-style time-attack rally", description:"Skill-driven rally prototype with leaderboard timing and PS2-inspired look.", cover:"https://img.itch.zone/aW1nLzIyMTcxMzUwLnBuZw==/315x250%23c/FYKwYx.png", media:[{src:"https://img.itch.zone/aW1nLzIyMTcxMzUwLnBuZw==/original/6v8wXL.png"}], engines:["Unity"], roles:["Game Design","Tech Art","UI/UX"], platforms:["PC","Mobile"], tags:["Racing","Stylized","PS2"], year:2025, links:{ itch:"https://rzrworks.itch.io/dustyrally" } },
@@ -370,7 +353,21 @@
         { id:"veiled-island", kind:"game", title:"Veiled Island", subtitle:"Atmospheric prototype", description:"Short walking/exploration slice.", cover:"https://img.itch.zone/aW1nLzE1OTMwNDIzLnBuZw==/315x250%23c/Ot7Q%2BC.png", engines:["Unity"], roles:["Design","Art"], platforms:["PC"], tags:["Exploration"], links:{ itch:"https://rzrworks.itch.io/veiled-island" } },
         { id:"cheese-hunt", kind:"game", title:"Cheese Hunt", subtitle:"Collect & survive", description:"Light survival/collect prototype.", cover:"https://img.itch.zone/aW1nLzIyMDEyMzgzLnBuZw==/315x250%23c/QS%2FouI.png", engines:["Unity"], roles:["Design","Programming"], platforms:["PC","Web"], tags:["Survival"], links:{ itch:"https://rzrworks.itch.io/cheese-hunt" } },
 
-        // Artworks (as models)
+        // Art & Assets
+        { id:"ps2-rally-cars",
+  kind:"model",
+  title:"PS2 Inspired Rally Cars",
+  subtitle:"Pack of 6 Cars",
+  description:"6 Low poly PS2 inspired cars i made for my finals.",
+  cover:"https://media.sketchfab.com/models/a101ba7e4f264b9c9d21397247e5c12f/thumbnails/9fa1bf088d804ef38c0bf0437aada653/1f15831e02c94edcb5a006426727fe00.jpeg",
+  media:[{ src:"https://media.sketchfab.com/models/a101ba7e4f264b9c9d21397247e5c12f/thumbnails/9fa1bf088d804ef38c0bf0437aada653/1f15831e02c94edcb5a006426727fe00.jpeg" }],
+  tags:["Asset Pack","Vehicle","Rally","PS2"],
+  links:{
+    artstation:"https://www.artstation.com/artwork/x36Pzr",
+    sketchfab:"https://sketchfab.com/3d-models/pack-of-6-cars-for-a-ps2-inspired-race-game-a101ba7e4f264b9c9d21397247e5c12f"
+  },
+  embed:"https://sketchfab.com/models/a101ba7e4f264b9c9d21397247e5c12f/embed?autostart=1&autospin=0.2&ui_theme=dark&ui_infos=0&ui_watermark=0"
+},
         { id:"lucifer-illustration", kind:"model", title:"Lucifer Illustration", subtitle:"Personal artwork", description:"Digital painting explorations.", cover:"https://cdna.artstation.com/p/assets/images/images/070/010/802/large/ruzgar-yalcin-lucifer2.jpg?1701537461", links:{ artstation:"https://www.artstation.com/artwork/kQrm6K" }, tags:["Illustration"] },
         { id:"pika-illustration", kind:"model", title:"Pika Illustration", subtitle:"Fan art", description:"Stylized character piece.", cover:"https://cdnb.artstation.com/p/assets/images/images/057/450/913/large/ruzgar-yalcin-pikaaaa1920.jpg?1671628863", links:{ artstation:"https://www.artstation.com/artwork/ArOKlN" }, tags:["Illustration"] },
         { id:"untitled-1", kind:"model", title:"Untitled Concept", subtitle:"Hard-surface practice", description:"Lighting and comp study.", cover:"https://cdna.artstation.com/p/assets/images/images/062/569/496/large/ruzgar-yalcin-untitled-1.jpg?1683465361", links:{ artstation:"https://www.artstation.com/artwork/39w1mo" }, tags:["Concept"] },
@@ -378,8 +375,8 @@
         { id:"hangar-scene", kind:"model", title:"Hangar Scene", subtitle:"Environment concept", description:"Scale & atmosphere test.", cover:"https://cdna.artstation.com/p/assets/images/images/059/089/528/large/ruzgar-yalcin-hangar1.jpg?1675624511", links:{ artstation:"https://www.artstation.com/artwork/eJGLZb" }, tags:["Environment"] },
 
         // Assets
-        { id:"lowpoly-vehicle-pack", kind:"model", title:"Low‑Poly Vehicle Pack", subtitle:"Game-ready cars", description:"Optimized vehicles for stylized games.", cover:"https://img.itch.zone/aW1nLzE0ODg2ODA3LnBuZw==/315x250%23c/RlNTgV.png", tags:["Asset Pack","Vehicle"], links:{ itch:"https://rzrworks.itch.io/lowpoly-vehicle-pack" } },
-        { id:"lowpoly-forest-pack", kind:"model", title:"Low‑Poly Forest Pack", subtitle:"Modular environment pack", description:"Lightweight props for mobile and PC.", cover:"https://img.itch.zone/aW1nLzExNDk5ODE3LnBuZw==/315x250%23c/R0AJNe.png", tags:["Asset Pack","Environment"], links:{ itch:"https://rzrworks.itch.io/lowpoly-forest-pack" } },
+        { id:"lowpoly-vehicle-pack", kind:"model", title:"Low-Poly Vehicle Pack", subtitle:"Game-ready cars", description:"Optimized vehicles for stylized games.", cover:"https://img.itch.zone/aW1nLzE0ODg2ODA3LnBuZw==/315x250%23c/RlNTgV.png", tags:["Asset Pack","Vehicle"], links:{ itch:"https://rzrworks.itch.io/lowpoly-vehicle-pack" } },
+        { id:"lowpoly-forest-pack", kind:"model", title:"Low-Poly Forest Pack", subtitle:"Modular environment pack", description:"Lightweight props for mobile and PC.", cover:"https://img.itch.zone/aW1nLzExNDk5ODE3LnBuZw==/315x250%23c/R0AJNe.png", tags:["Asset Pack","Environment"], links:{ itch:"https://rzrworks.itch.io/lowpoly-forest-pack" } },
       ]
     };
 
@@ -417,7 +414,6 @@
       btn.addEventListener('click', () => {
         if (activeTags.has(t)) activeTags.delete(t); else activeTags.add(t);
         renderCards();
-        // visual feedback
         btn.style.outline = activeTags.has(t) ? '2px solid var(--accent)' : 'none';
       });
       tagRow.appendChild(btn);
@@ -454,14 +450,12 @@
       const desc = p.description ? `<p class="muted" style="margin:6px 0 0">${p.description}</p>` : '';
       const tags = (p.tags || []).slice(0,3).map(t => `<span class="chip">${t}</span>`).join(' ');
       const engines = (p.engines || []).slice(0,2).map(e => `<span class="chip">${e}</span>`).join(' ');
-      const left = `
-        ${tags}
-        ${engines}
-      `;
+      const left = `${tags} ${engines}`;
       const links = [];
       if (p.links?.github) links.push(`<a class="btn-link" href="${p.links.github}" target="_blank" rel="noopener">GitHub</a>`);
       if (p.links?.itch) links.push(`<a class="btn-link" href="${p.links.itch}" target="_blank" rel="noopener">Play</a>`);
       if (p.links?.artstation) links.push(`<a class="btn-link" href="${p.links.artstation}" target="_blank" rel="noopener">ArtStation</a>`);
+      if (p.links?.sketchfab) links.push(`<a class="btn-link" href="${p.links.sketchfab}" target="_blank" rel="noopener">Sketchfab</a>`);
       if (p.links?.video) links.push(`<a class="btn-link" href="${p.links.video}" target="_blank" rel="noopener">Video</a>`);
       return `
         <div class="card">
@@ -525,37 +519,48 @@
     const lbClose = document.getElementById('lbClose');
 
     function openLightbox(p) {
-      lbTitle.textContent = p.title;
-      lbSubtitle.textContent = p.subtitle || '';
-      lbGallery.innerHTML = (p.media && p.media.length ? p.media : [{src: p.cover}])
-        .map(m => `<img src="${m.src}" alt="${p.title}">`).join('');
-      lbChips.innerHTML = ''
-        + (p.tags||[]).map(t => `<span class="chip">${t}</span>`).join(' ')
-        + (p.engines||[]).map(e => `<span class="chip">${e}</span>`).join(' ')
-        + (p.platforms||[]).map(pl => `<span class="chip">${pl}</span>`).join(' ');
-      const links = [];
-      if (p.links?.github) links.push(`<a class="btn-link" href="${p.links.github}" target="_blank" rel="noopener">GitHub</a>`);
-      if (p.links?.itch) links.push(`<a class="btn-link" href="${p.links.itch}" target="_blank" rel="noopener">Play</a>`);
-      if (p.links?.artstation) links.push(`<a class="btn-link" href="${p.links.artstation}" target="_blank" rel="noopener">ArtStation</a>`);
-      if (p.links?.website) links.push(`<a class="btn-link" href="${p.links.website}" target="_blank" rel="noopener">Site</a>`);
-      if (p.links?.video) links.push(`<a class="btn-link" href="${p.links.video}" target="_blank" rel="noopener">Video</a>`);
-      lbLinks.innerHTML = links.join('');
-      lightbox.classList.add('open');
-    }
+  lbTitle.textContent = p.title;
+  lbSubtitle.textContent = p.subtitle || '';
+
+  if (p.embed) {
+    lbGallery.classList.add('single');   // ⬅️ embed varken tek kolon
+    lbGallery.innerHTML = `
+      <div class="embed-wrap">
+        <iframe
+          src="${p.embed}"
+          title="${p.title} — 3D"
+          allow="autoplay; fullscreen; xr-spatial-tracking"
+          xr-spatial-tracking
+          execution-while-out-of-viewport
+          execution-while-not-rendered
+          web-share
+        ></iframe>
+      </div>`;
+  } else {
+    lbGallery.classList.remove('single'); // ⬅️ resim galerisine dönünce 2 kolona geri
+    lbGallery.innerHTML = (p.media && p.media.length ? p.media : [{src: p.cover}])
+      .map(m => `<img src="${m.src}" alt="${p.title}">`).join('');
+  }
+
+  lbChips.innerHTML = ''
+    + (p.tags||[]).map(t => `<span class="chip">${t}</span>`).join(' ')
+    + (p.engines||[]).map(e => `<span class="chip">${e}</span>`).join(' ')
+    + (p.platforms||[]).map(pl => `<span class="chip">${pl}</span>`).join(' ');
+
+  const links = [];
+  if (p.links?.github) links.push(`<a class="btn-link" href="${p.links.github}" target="_blank" rel="noopener">GitHub</a>`);
+  if (p.links?.itch) links.push(`<a class="btn-link" href="${p.links.itch}" target="_blank" rel="noopener">Play</a>`);
+  if (p.links?.artstation) links.push(`<a class="btn-link" href="${p.links.artstation}" target="_blank" rel="noopener">ArtStation</a>`);
+  if (p.links?.sketchfab) links.push(`<a class="btn-link" href="${p.links.sketchfab}" target="_blank" rel="noopener">Sketchfab</a>`);
+  if (p.links?.website) links.push(`<a class="btn-link" href="${p.links.website}" target="_blank" rel="noopener">Site</a>`);
+  if (p.links?.video) links.push(`<a class="btn-link" href="${p.links.video}" target="_blank" rel="noopener">Video</a>`);
+  lbLinks.innerHTML = links.join('');
+
+  lightbox.classList.add('open');
+}
     lbClose.addEventListener('click', () => lightbox.classList.remove('open'));
     lightbox.addEventListener('click', (e) => {
       if (e.target === lightbox) lightbox.classList.remove('open');
-    });
-
-    // Contact (mailto)
-    document.getElementById('contactForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('cName').value || '(no name)';
-      const from = document.getElementById('cFrom').value || '(no email)';
-      const msg = document.getElementById('cMsg').value || '';
-      const subject = encodeURIComponent(`Portfolio inquiry from ${name}`);
-      const body = encodeURIComponent(`${msg}\n\nSender: ${from}`);
-      window.location.href = `mailto:?subject=${subject}&body=${body}`;
     });
 
     // Register service worker (keep your original file)
