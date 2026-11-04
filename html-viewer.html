@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiveFrame: HTML Viewer</title>
+<style>
+  :root{
+    --bg:#0b0f17; --panel:rgba(18,24,38,.88); --line:rgba(255,255,255,.12);
+    --text:#e6ebf5; --muted:#8b97ad; --accent:#4cc2ff; --danger:#ff6b81;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+    font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+  button{font:inherit;color:inherit;cursor:pointer}
+
+  /* ---------- stage ---------- */
+  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 30%,#141c2e,#070a10)}
+  #frameWrap{width:100%;height:100%;transition:width .25s,height .25s,border-radius .25s;background:#fff;
+    max-width:100%;max-height:100%}
+  #frameWrap.boxed{border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);
+    outline:1px solid var(--line);height:calc(100% - 90px);margin-top:60px}
+  iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+  #frameWrap.hidden{display:none}
+
+  /* ---------- splash ---------- */
+  #splash{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:24px;gap:14px}
+  #splash.hidden{display:none}
+  #splash h1{margin:0;font-size:28px;letter-spacing:-.02em}
+  #splash p{margin:0;color:var(--muted);max-width:440px}
+  .drop{border:2px dashed var(--line);border-radius:18px;padding:30px 40px;margin-top:6px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+  .btn{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:10px;
+    padding:7px 12px;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+  .btn:hover{background:rgba(255,255,255,.13)}
+  .btn.primary{background:var(--accent);color:#04121c;border-color:transparent;font-weight:600}
+  .btn.primary:hover{filter:brightness(1.1)}
+  .btn.on{background:rgba(76,194,255,.2);border-color:var(--accent);color:var(--accent)}
+  .btn.danger:hover{background:rgba(255,107,129,.2);color:var(--danger)}
+  .btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---------- floating bar ---------- */
+  #hot{position:fixed;top:0;left:0;right:0;height:14px;z-index:30}
+  #bar{position:fixed;top:12px;left:50%;transform:translate(-50%,0);z-index:40;
+    background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line);border-radius:16px;padding:7px 9px;
+    display:flex;gap:8px;align-items:center;max-width:96vw;
+    box-shadow:0 10px 40px rgba(0,0,0,.5);transition:opacity .25s,transform .25s}
+  #bar.away{opacity:0;transform:translate(-50%,-30px);pointer-events:none}
+  .sep{width:1px;align-self:stretch;background:var(--line)}
+  .seg{display:flex;gap:2px;background:rgba(0,0,0,.3);padding:3px;border-radius:11px}
+  .seg .btn{border:0;background:transparent;padding:5px 9px}
+  .seg .btn.on{background:rgba(76,194,255,.2)}
+  #name{max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:12px}
+  .menu{position:relative}
+  .menu .pop{position:absolute;right:0;top:100%;padding-top:8px;display:none}
+  .menu:hover .pop,.menu:focus-within .pop{display:block}
+  .menu .pop > div{background:rgba(18,24,38,.98);border:1px solid var(--line);border-radius:12px;padding:5px;min-width:190px}
+  .menu .pop .btn{width:100%;border:0;background:transparent;justify-content:flex-start}
+  .menu .pop .btn:hover{background:rgba(255,255,255,.1)}
+
+  /* ---------- code drawer ---------- */
+  #drawer,#lib{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);z-index:50;background:var(--panel);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-left:1px solid var(--line);
+    display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s}
+  #drawer.open,#lib.open{transform:none}
+  #drawer header,#drawer footer,#lib header,#lib footer{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:8px}
+  #drawer header,#lib header{border-bottom:1px solid var(--line)}
+  #drawer footer,#lib footer{border-top:1px solid var(--line)}
+  #lib header span{font-size:12px;color:var(--muted);flex:1;margin-left:8px}
+  #libList{flex:1;overflow:auto;padding:10px}
+  .item{display:flex;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+  .item.cur{border-color:var(--accent)}
+  .item .info{flex:1;min-width:0}
+  .item b,.item small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .item small{color:var(--muted);font-size:12px}
+  .empty{color:var(--muted);text-align:center;margin:30px 10px}
+  #code{flex:1;margin:12px;border-radius:12px;border:1px solid var(--line);background:#070a10;color:#cfe3ff;
+    padding:14px;resize:none;outline:none;font:12.5px/1.55 ui-monospace,"Fira Code",Menlo,Consolas,monospace;tab-size:2}
+  #code:focus{border-color:var(--accent)}
+
+  /* ---------- drop overlay + toast ---------- */
+  #dropper{position:fixed;inset:0;z-index:60;background:rgba(8,30,48,.92);border:4px dashed var(--accent);
+    display:none;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:var(--accent)}
+  #dropper.show{display:flex}
+  #toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,30px);opacity:0;z-index:70;
+    background:#1a2234;border:1px solid var(--line);padding:9px 16px;border-radius:12px;transition:.25s;pointer-events:none}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  #toast.err{border-color:var(--danger);color:var(--danger)}
+
+  @media (max-width:760px){ .lbl{display:none} #name{display:none} }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="splash">
+    <h1>LiveFrame</h1>
+    <p>Open any HTML file as if it were the page itself. Use the bar at the top to edit, resize, or export it.</p>
+    <div class="drop">
+      <div class="row">
+        <button class="btn primary" id="sOpen">Open HTML file</button>
+        <button class="btn" id="sPaste">Paste code</button>
+        <button class="btn" id="sLib">Library</button>
+        <button class="btn" id="sDemo">Try a demo</button>
+      </div>
+      <p style="margin-top:14px;font-size:12px">…or drag &amp; drop a .html file anywhere. You can also press Ctrl/⌘ + V.</p>
+    </div>
+  </div>
+  <div id="frameWrap" class="hidden">
+    <iframe id="frame" title="Preview"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-downloads"></iframe>
+  </div>
+</div>
+
+<div id="hot"></div>
+
+<!-- floating player-style bar -->
+<div id="bar" class="away">
+  <button class="btn danger" id="bClose" title="Close this HTML (Esc)">
+    <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <span id="name">No file</span>
+  <div class="sep"></div>
+
+  <button class="btn" id="bOpen" title="Open another file">
+    <svg viewBox="0 0 24 24"><path d="M4 20h16M12 4v12m0-12-5 5m5-5 5 5"/></svg><span class="lbl">Open</span></button>
+  <button class="btn" id="bLib" title="Saved files">
+    <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg><span class="lbl">Library</span></button>
+  <button class="btn" id="bCode" title="View / edit source code">
+    <svg viewBox="0 0 24 24"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 5l-4 14"/></svg><span class="lbl">Code</span></button>
+  <button class="btn" id="bEdit" title="Click-to-edit text directly on the page">
+    <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span class="lbl">Edit page</span></button>
+
+  <div class="sep"></div>
+  <div class="seg" id="vp">
+    <button class="btn on" data-w="full" title="Full screen">
+      <svg viewBox="0 0 24 24"><path d="M8 3H3v5M21 8V3h-5M3 16v5h5M16 21h5v-5"/></svg></button>
+    <button class="btn" data-w="1280" title="Desktop 1280px">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
+    <button class="btn" data-w="768" title="Tablet 768px">
+      <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg></button>
+    <button class="btn" data-w="375" title="Mobile 375px">
+      <svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></button>
+  </div>
+
+  <div class="sep"></div>
+  <div class="menu">
+    <button class="btn primary" tabindex="0">
+      <svg viewBox="0 0 24 24"><path d="M12 4v12m0 0-5-5m5 5 5-5M4 20h16"/></svg><span class="lbl">Export</span></button>
+    <div class="pop"><div>
+      <button class="btn" id="xPdf">Save as PDF (print)</button>
+      <button class="btn" id="xHtml">Download .html</button>
+      <button class="btn" id="xCopy">Copy HTML source</button>
+      <button class="btn" id="xLink">Copy share link</button>
+      <button class="btn" id="xTab">Open in new tab</button>
+    </div></div>
+  </div>
+  <button class="btn" id="bFs" title="Browser fullscreen (F)">
+    <svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+  <button class="btn" id="bPin" title="Keep the bar visible">
+    <svg viewBox="0 0 24 24"><path d="M12 17v5M9 3h6l-1 7 3 3H7l3-3Z"/></svg></button>
+</div>
+
+<!-- code drawer -->
+<aside id="drawer">
+  <header><b>Source code</b>
+    <button class="btn" id="dClose"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></header>
+  <textarea id="code" spellcheck="false" placeholder="Paste HTML here…"></textarea>
+  <footer>
+    <span style="color:var(--muted);font-size:12px">Ctrl/⌘ + Enter to apply</span>
+    <button class="btn primary" id="dApply">Apply &amp; render</button>
+  </footer>
+</aside>
+
+<aside id="lib">
+  <header><b>Library</b><span id="syncState"></span>
+    <button class="btn" id="lClose"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></header>
+  <div id="libList"></div>
+  <footer><span id="libHint" style="color:var(--muted);font-size:12px"></span>
+    <button class="btn primary" id="lOpen">Open file</button></footer>
+</aside>
+
+<div id="dropper">Drop HTML file to view it</div>
+<div id="toast"></div>
+<input type="file" id="file" accept=".html,.htm,text/html" hidden>
+
+<script>
+(function(){
+  // OPTIONAL cross-device sync: set this to the URL of sync.php (e.g. 'sync.php') to enable it.
+  const SYNC_URL = '';
+
+  const $ = id => document.getElementById(id);
+  const frame=$('frame'), wrap=$('frameWrap'), splash=$('splash'), bar=$('bar'),
+        drawer=$('drawer'), code=$('code'), toastEl=$('toast');
+  let blobUrl=null, filename='untitled.html', pinned=false, hideT=null, hasDoc=false, editing=false;
+  let curId=null, lastSaved='', source='', domEdited=false, loaded=false;
+  const lib=$('lib');
+
+  const DEMO = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Demo</title>
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#1e1b4b,#0f172a);color:#fff;font-family:system-ui,sans-serif;text-align:center}
+h1{font-size:clamp(32px,6vw,64px);margin:0 0 8px}
+button{padding:12px 22px;border:0;border-radius:12px;background:#38bdf8;font-weight:700;font-size:16px;cursor:pointer}
+p{opacity:.75}
+</style></head><body><div>
+<h1>Hello, I'm a live page 👋</h1>
+<p>Click “Edit page” in the bar to change this text, then export it.</p>
+<button onclick="this.textContent='Clicked '+(++window.n||(window.n=1))+'×'">Interactive button</button>
+</div></body></html>`;
+
+  /* ---------- helpers ---------- */
+  function toast(msg, err){
+    toastEl.textContent=msg; toastEl.className='show'+(err?' err':'');
+    clearTimeout(toast.t); toast.t=setTimeout(()=>toastEl.className='',2200);
+  }
+  function currentHTML(){
+    // Only re-serialise the live page if the user actually edited it; otherwise keep the original source
+    if(domEdited && loaded){
+      try{
+        const d=frame.contentDocument;
+        const dt=d.doctype?'<!DOCTYPE '+d.doctype.name+'>\n':'';
+        source=dt+d.documentElement.outerHTML;
+      }catch(e){}
+    }
+    return source;
+  }
+
+  /* ---------- storage: IndexedDB (this device) + optional server (all devices) ---------- */
+  let dbp=null;
+  const db=()=>dbp||(dbp=new Promise((res,rej)=>{
+    const r=indexedDB.open('html-viewer',1);
+    r.onupgradeneeded=()=>r.result.createObjectStore('files',{keyPath:'id'});
+    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);
+  }));
+  const run=(mode,fn)=>db().then(d=>new Promise((res,rej)=>{
+    const t=d.transaction('files',mode); const rq=fn(t.objectStore('files'));
+    t.oncomplete=()=>res(rq&&rq.result); t.onerror=()=>rej(t.error);
+  }));
+  const dbAll=()=>run('readonly',s=>s.getAll());
+  const dbGet=id=>run('readonly',s=>s.get(id));
+  const dbPut=r=>run('readwrite',s=>s.put(r));
+  const dbDel=id=>run('readwrite',s=>s.delete(id));
+
+  const remote={
+    on:!!SYNC_URL,
+    async call(q,body){
+      let key=''; try{key=localStorage.getItem('hv:key')||'';}catch(e){}
+      if(!key){ key=prompt('Sync password (the key set in sync.php):')||''; try{localStorage.setItem('hv:key',key);}catch(e){} }
+      const o={headers:{'X-Key':key}};
+      if(body){o.method='POST';o.body=JSON.stringify(body);}
+      const r=await fetch(SYNC_URL+(q?'?'+q:''),o);
+      if(r.status===401){ try{localStorage.removeItem('hv:key');}catch(e){} throw new Error('Wrong sync password'); }
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    }
+  };
+  function setSync(t,err){ const e=$('syncState'); e.textContent=t; e.style.color=err?'var(--danger)':'var(--muted)'; }
+  setSync(remote.on?'Syncing with your server':'Saved on this device');
+  $('libHint').textContent=remote.on?'':'This device only. Use Export → Copy share link for other devices.';
+  const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+  async function save(force){
+    if(!hasDoc) return;
+    const html=currentHTML();
+    if(!html || (!force && html===lastSaved)) return;
+    if(!curId) curId=newId();
+    lastSaved=html;
+    const rec={id:curId,name:filename,html,updated:Date.now()};
+    try{ await dbPut(rec); localStorage.setItem('hv:last',rec.id); }catch(e){}
+    if(remote.on){
+      try{ await remote.call('',{action:'save',...rec}); setSync('Synced '+new Date().toLocaleTimeString([], {timeStyle:'short'})); }
+      catch(e){ setSync('Server unreachable – will retry',true); lastSaved=''; }
+    }
+  }
+
+  async function openItem(id,quiet){
+    let rec=null; try{rec=await dbGet(id);}catch(e){}
+    if(remote.on){
+      try{ const r=await remote.call('action=get&id='+encodeURIComponent(id));
+        if(r&&r.html&&(!rec||r.updated>rec.updated)){ rec=r; await dbPut(r); } }catch(e){}
+    }
+    if(!rec){ if(!quiet) toast('Could not load that file',true); return; }
+    render(rec.html,rec.name,rec.id); lib.classList.remove('open');
+  }
+  async function delItem(id,name){
+    if(!confirm('Delete “'+name+'”?')) return;
+    try{await dbDel(id);}catch(e){}
+    if(remote.on){ try{await remote.call('',{action:'delete',id});}catch(e){toast('Could not delete on the server',true);} }
+    try{ if(localStorage.getItem('hv:last')===id) localStorage.removeItem('hv:last'); }catch(e){}
+    if(id===curId) closeDoc(true);
+    refreshLib();
+  }
+  async function refreshLib(){
+    const box=$('libList'); box.textContent='';
+    let items=[]; try{items=await dbAll();}catch(e){}
+    const map=new Map(items.map(i=>[i.id,{id:i.id,name:i.name,updated:i.updated,where:'device'}]));
+    if(remote.on){
+      try{
+        const r=await remote.call('action=list');
+        r.forEach(x=>{ const m=map.get(x.id);
+          if(!m) map.set(x.id,{id:x.id,name:x.name,updated:x.updated,where:'server'});
+          else{ m.where='both'; if(x.updated>m.updated){m.updated=x.updated;m.name=x.name;} } });
+        setSync('Synced with your server');
+      }catch(e){ setSync('Server unreachable – showing this device only',true); }
+    }
+    const rows=[...map.values()].sort((a,b)=>b.updated-a.updated);
+    if(!rows.length){
+      const p=document.createElement('p'); p.className='empty';
+      p.textContent='Nothing saved yet. Every file you open is saved here automatically.'; box.append(p); return;
+    }
+    rows.forEach(it=>{
+      const row=document.createElement('div'); row.className='item'+(it.id===curId?' cur':'');
+      const info=document.createElement('div'); info.className='info';
+      const n=document.createElement('b'); n.textContent=it.name;
+      const sm=document.createElement('small');
+      sm.textContent=new Date(it.updated).toLocaleString([], {dateStyle:'medium',timeStyle:'short'})
+        +(remote.on?(it.where==='device'?' · not synced yet':' · synced'):'');
+      info.append(n,sm);
+      const o=document.createElement('button'); o.className='btn'; o.textContent='Open'; o.onclick=()=>openItem(it.id);
+      const d=document.createElement('button'); d.className='btn danger'; d.textContent='Delete'; d.onclick=()=>delItem(it.id,it.name);
+      row.append(info,o,d); box.append(row);
+    });
+  }
+  function openLib(){ drawer.classList.remove('open'); lib.classList.add('open'); refreshLib(); }
+
+  /* ---------- share links (HTML compressed into the URL) ---------- */
+  async function pipe(stream,bytes){
+    const w=stream.writable.getWriter(); w.write(bytes); w.close();
+    return new Uint8Array(await new Response(stream.readable).arrayBuffer());
+  }
+  async function enc(str){
+    const u=await pipe(new CompressionStream('deflate-raw'),new TextEncoder().encode(str));
+    let b=''; u.forEach(c=>b+=String.fromCharCode(c));
+    return btoa(b).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+  async function dec(s){
+    const bin=atob(s.replace(/-/g,'+').replace(/_/g,'/'));
+    const u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i);
+    return new TextDecoder().decode(await pipe(new DecompressionStream('deflate-raw'),u));
+  }
+
+  /* ---------- render ---------- */
+  function render(html, name, id){
+    if(blobUrl) URL.revokeObjectURL(blobUrl);
+    blobUrl=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));
+    loaded=false; domEdited=false; source=html; lastSaved=''; curId=id||null;
+    frame.src=blobUrl;
+    filename=name||filename; hasDoc=true; setEdit(false);
+    code.value=html;
+    splash.classList.add('hidden'); wrap.classList.remove('hidden');
+    $('name').textContent=filename;
+    showBar(true);
+  }
+  frame.addEventListener('load',()=>{
+    if(!hasDoc) return;
+    loaded=true;
+    try{
+      const d=frame.contentDocument;
+      d.addEventListener('input',()=>{domEdited=true;});
+      d.addEventListener('dragover',e=>{e.preventDefault();$('dropper').classList.add('show');});
+      d.addEventListener('dragleave',()=>$('dropper').classList.remove('show'));
+      d.addEventListener('drop',onDrop);
+      d.addEventListener('keydown',onKey);
+      d.addEventListener('mousemove',e=>{ if(e.clientY<14 && !wrap.classList.contains('boxed')) showBar(); });
+      if(editing) d.designMode='on';
+    }catch(e){}
+    save(true);
+  });
+
+  function closeDoc(skipSave){
+    if(skipSave!==true) save();
+    hasDoc=false; loaded=false; curId=null; lastSaved=''; domEdited=false; source=''; setEdit(false);
+    frame.src='about:blank';
+    if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null}
+    wrap.classList.add('hidden'); splash.classList.remove('hidden');
+    drawer.classList.remove('open'); $('name').textContent='No file';
+    showBar(true); setVp('full');
+  }
+
+  /* ---------- files ---------- */
+  function readFile(f){
+    if(!f) return;
+    if(!/\.html?$/i.test(f.name) && f.type!=='text/html'){ toast('Please choose a .html file',true); return; }
+    const r=new FileReader();
+    r.onload=()=>render(r.result,f.name);
+    r.readAsText(f);
+  }
+  function onDrop(e){
+    e.preventDefault(); $('dropper').classList.remove('show');
+    readFile(e.dataTransfer.files[0]);
+  }
+  $('file').addEventListener('change',e=>{readFile(e.target.files[0]); e.target.value='';});
+  const pick=()=>$('file').click();
+  $('sOpen').onclick=pick; $('bOpen').onclick=pick;
+  $('sPaste').onclick=()=>{lib.classList.remove('open');drawer.classList.add('open');code.focus();};
+  $('sLib').onclick=openLib; $('bLib').onclick=openLib;
+  $('lClose').onclick=()=>lib.classList.remove('open');
+  $('lOpen').onclick=pick;
+  $('sDemo').onclick=()=>render(DEMO,'demo.html');
+
+  window.addEventListener('dragenter',e=>{e.preventDefault();$('dropper').classList.add('show');});
+  window.addEventListener('dragover',e=>e.preventDefault());
+  $('dropper').addEventListener('dragleave',e=>{ if(e.relatedTarget===null) $('dropper').classList.remove('show'); });
+  $('dropper').addEventListener('drop',onDrop);
+
+  document.addEventListener('paste',e=>{
+    if(drawer.classList.contains('open')||hasDoc) return;
+    const t=e.clipboardData.getData('text');
+    if(t && /<\w+/.test(t)){ render(t,'pasted.html'); }
+  });
+
+  /* ---------- toolbar ---------- */
+  $('bClose').onclick=()=>closeDoc();
+  $('bCode').onclick=()=>{ if(hasDoc) code.value=currentHTML(); lib.classList.remove('open'); drawer.classList.toggle('open'); };
+  $('dClose').onclick=()=>drawer.classList.remove('open');
+  $('dApply').onclick=apply;
+  function apply(){
+    if(!code.value.trim()){toast('Nothing to render',true);return;}
+    render(code.value,hasDoc?filename:'pasted.html',hasDoc?curId:undefined); drawer.classList.remove('open');
+  }
+  code.addEventListener('keydown',e=>{
+    if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();apply();}
+    if(e.key==='Tab'){e.preventDefault();const s=code.selectionStart;
+      code.setRangeText('  ',s,code.selectionEnd,'end');}
+  });
+
+  function setEdit(on){
+    editing=on&&hasDoc; $('bEdit').classList.toggle('on',editing);
+    try{ frame.contentDocument.designMode=editing?'on':'off'; }catch(e){}
+  }
+  $('bEdit').onclick=()=>{
+    if(!hasDoc) return toast('Open a file first',true);
+    setEdit(!editing); toast(editing?'Edit mode on — click any text on the page':'Edit mode off');
+  };
+
+  function setVp(w){
+    document.querySelectorAll('#vp .btn').forEach(b=>b.classList.toggle('on',b.dataset.w===String(w)));
+    if(w==='full'){ wrap.classList.remove('boxed'); wrap.style.width='100%'; }
+    else{ wrap.classList.add('boxed'); wrap.style.width=w+'px'; }
+  }
+  document.querySelectorAll('#vp .btn').forEach(b=>b.onclick=()=>setVp(b.dataset.w));
+
+  /* ---------- export ---------- */
+  function needDoc(){ if(!hasDoc){toast('Open a file first',true);return false} return true; }
+  $('xPdf').onclick=()=>{
+    if(!needDoc()) return;
+    toast('Choose “Save as PDF” in the print dialog');
+    setTimeout(()=>{ try{frame.contentWindow.focus();frame.contentWindow.print();}catch(e){toast('Print blocked by the browser',true);} },250);
+  };
+  $('xHtml').onclick=()=>{
+    if(!needDoc()) return;
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([currentHTML()],{type:'text/html'}));
+    a.download=filename.replace(/(\.html?)?$/i,'')+'-edited.html';
+    document.body.appendChild(a);a.click();a.remove();
+    toast('Downloaded');
+  };
+  $('xCopy').onclick=()=>{
+    if(!needDoc()) return;
+    navigator.clipboard.writeText(currentHTML()).then(()=>toast('HTML copied'),()=>toast('Copy blocked',true));
+  };
+  $('xTab').onclick=()=>{
+    if(!needDoc()) return;
+    window.open(URL.createObjectURL(new Blob([currentHTML()],{type:'text/html'})),'_blank');
+  };
+  $('xLink').onclick=async()=>{
+    if(!needDoc()) return;
+    try{
+      const url=location.origin+location.pathname+'#d='+await enc(currentHTML())+'&n='+encodeURIComponent(filename);
+      if(url.length>1500000) return toast('File too large for a link – use the sync server instead',true);
+      await navigator.clipboard.writeText(url);
+      toast(url.length>60000?'Link copied (long – some chat apps may cut it off)':'Share link copied');
+    }catch(e){ toast('Could not create the link',true); }
+  };
+  $('bFs').onclick=toggleFs;
+  function toggleFs(){
+    if(document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
+  }
+
+  /* ---------- auto-hide bar ---------- */
+  // Mouse events over an iframe never reach this page, so a thin hot-zone
+  // above the page (and a listener injected into the page) reveals the bar.
+  function showBar(stick){
+    bar.classList.remove('away'); clearTimeout(hideT);
+    if(!pinned && hasDoc && !stick) hideT=setTimeout(hide,2800);
+    if(!pinned && hasDoc && stick===true) hideT=setTimeout(hide,3500);
+  }
+  function hide(){ if(!pinned && hasDoc && !bar.matches(':hover') && !document.querySelector('aside.open')) bar.classList.add('away'); else if(!pinned&&hasDoc) hideT=setTimeout(hide,1500); }
+  $('hot').addEventListener('mouseenter',()=>showBar());
+  bar.addEventListener('mouseenter',()=>clearTimeout(hideT));
+  bar.addEventListener('mouseleave',()=>showBar());
+  $('bPin').onclick=()=>{
+    pinned=!pinned; $('bPin').classList.toggle('on',pinned);
+    if(pinned){bar.classList.remove('away');clearTimeout(hideT);} else showBar();
+    toast(pinned?'Bar pinned':'Bar auto-hides — hover the top edge to bring it back');
+  };
+
+  /* ---------- keys ---------- */
+  function onKey(e){
+    const typing=/input|textarea/i.test((e.target.tagName||''))||e.target.isContentEditable||editing;
+    if(e.key==='Escape'){ if(document.querySelector('aside.open')) document.querySelectorAll('aside.open').forEach(a=>a.classList.remove('open')); else if(hasDoc && !document.fullscreenElement) showBar(); }
+    if(typing) return;
+    if(e.key==='f'||e.key==='F') toggleFs();
+  }
+  document.addEventListener('keydown',onKey);
+
+  /* ---------- autosave + restore ---------- */
+  setInterval(()=>save(),4000);
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden) save(); });
+  window.addEventListener('pagehide',()=>save());
+
+  (async function boot(){
+    const m=location.hash.match(/^#d=([^&]+)(?:&n=(.*))?$/);
+    if(m){
+      try{
+        const html=await dec(m[1]);
+        history.replaceState(null,'',location.pathname+location.search);
+        render(html,decodeURIComponent(m[2]||'shared.html')); toast('Opened from share link'); return;
+      }catch(e){ toast('That share link looks broken',true); }
+    }
+    let id=null; try{id=localStorage.getItem('hv:last');}catch(e){}
+    if(remote.on){
+      try{
+        const r=await remote.call('action=list');
+        if(r.length){ r.sort((a,b)=>b.updated-a.updated);
+          const loc=id?await dbGet(id).catch(()=>null):null;
+          if(!loc||r[0].updated>loc.updated) id=r[0].id; }
+      }catch(e){ setSync(e.message||'Server unreachable',true); }
+    }
+    if(id) await openItem(id,true);
+  })();
+  showBar(true);
+})();
+</script>
+</body>
+</html>
