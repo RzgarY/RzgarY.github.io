@@ -10,103 +10,87 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#07080B;--panel:#12151C;--panel2:#1a1e27;--edge:#2a2f3b;--text:#ECEEF3;--mute:#8A8F9E;--accent:#A78BFA}
+:root{--bg:#07080B;--panel:#12151C;--panel2:#1a1e27;--edge:#2a2f3b;--text:#ECEEF3;--mute:#8A8F9E;--accent:#A78BFA;--pad:16px;
+ /* one locked size for BOTH screens: limited by phone width and by half the viewport height */
+ --s:max(220px,min(calc(100vw - 2*var(--pad) - 16px),calc((100svh - 2*var(--pad) - 40px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))/2),560px))}
 *{margin:0;padding:0;box-sizing:border-box}
-html{height:100%}
-body{min-height:100%;background:radial-gradient(ellipse 70% 45% at 50% 30%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),var(--bg);color:var(--text);
+html{overflow-x:hidden}
+body{min-height:100vh;min-height:100dvh;background:radial-gradient(ellipse 70% 45% at 50% 30%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),var(--bg);color:var(--text);
  font-family:'Nunito',ui-rounded,'Hiragino Maru Gothic ProN',system-ui,sans-serif;display:flex;align-items:center;justify-content:center;
- padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
+ padding:max(var(--pad),env(safe-area-inset-top)) max(var(--pad),env(safe-area-inset-right)) max(var(--pad),env(safe-area-inset-bottom)) max(var(--pad),env(safe-area-inset-left))}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a:focus-visible,button:focus-visible{outline:3px solid var(--text);outline-offset:3px}
 svg{display:block}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-.console{--w:min(100%,640px,max(500px,calc((100svh - 130px)/1.2)));width:100%;display:flex;flex-direction:column;align-items:center;gap:24px}
-.screen{position:relative;overflow:hidden;overflow:clip;border:1px solid var(--edge);border-radius:20px;box-shadow:0 0 0 5px #0c0e13,0 0 0 6px var(--edge),0 30px 60px -30px #000;display:flex;flex-direction:column}
-.top{width:var(--w);aspect-ratio:5/3;background:radial-gradient(ellipse 70% 80% at 50% 60%,color-mix(in srgb,var(--accent) 20%,transparent),transparent 70%),linear-gradient(180deg,#181c25,#0f1218)}
+.console{flex:none;display:flex;flex-direction:column;align-items:center;gap:24px}
+.screen{position:relative;flex:none;width:var(--s);height:var(--s);overflow:hidden;overflow:clip;container-type:inline-size;border:1px solid var(--edge);border-radius:20px;box-shadow:0 0 0 5px #0c0e13,0 0 0 6px var(--edge),0 30px 60px -30px #000;display:flex;flex-direction:column}
+.top{background:radial-gradient(ellipse 70% 80% at 50% 60%,color-mix(in srgb,var(--accent) 20%,transparent),transparent 70%),linear-gradient(180deg,#181c25,#0f1218)}
 .top::before{content:"";position:absolute;inset:0;pointer-events:none;
  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84'%3E%3Crect x='10' y='10' width='64' height='64' rx='16' fill='white' fill-opacity='.05'/%3E%3C/svg%3E") center/84px;
  -webkit-mask-image:radial-gradient(ellipse at center,#000 25%,transparent 85%);mask-image:radial-gradient(ellipse at center,#000 25%,transparent 85%)}
-.bottom{width:calc(var(--w)*.8);aspect-ratio:4/3;background:linear-gradient(180deg,#161a23,#0f1218)}
+.bottom{background:linear-gradient(180deg,#161a23,#0f1218)}
 
 /* status bar */
-.status{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 14px;height:36px;background:rgba(0,0,0,.28);border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem;font-weight:800;color:var(--mute)}
+.status{position:relative;flex:none;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 14px;height:36px;background:rgba(0,0,0,.28);border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem;font-weight:800;color:var(--mute)}
 .status .l,.status .r{display:flex;align-items:center;gap:10px;min-width:0}
-.bars{width:18px;height:15px;fill:var(--accent)}
-.pill{background:var(--accent);color:#0A0A0F;border-radius:99px;padding:3px 12px;font-size:.8rem;font-weight:800;white-space:nowrap}
+.bars{flex:none;width:18px;height:15px;fill:var(--accent)}
+.pill{background:var(--accent);color:#0A0A0F;border-radius:99px;padding:3px 12px;font-size:.8rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .clock{font-variant-numeric:tabular-nums;color:var(--text);white-space:nowrap}
-.batt{width:26px;height:13px}
+.batt{flex:none;width:26px;height:13px}
+@container (max-width:360px){.clock .d,.bars{display:none}}
 
-/* detail */
-.detail{position:relative;flex:1;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"icon info" "icon launch";align-content:center;align-items:center;column-gap:clamp(18px,4vw,32px);row-gap:16px;padding:clamp(16px,4vw,28px) clamp(18px,5vw,40px)}
-.bigicon{grid-area:icon;width:clamp(84px,24vw,150px);aspect-ratio:1;border-radius:22%;display:grid;place-items:center;
+/* detail: icon in the middle, name + description underneath, nothing resizes */
+.detail{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+ gap:calc(var(--s)*.035);padding:0 calc(var(--s)*.09) calc(var(--s)*.07);color:inherit;text-decoration:none}
+.detail:focus-visible{outline-offset:-6px}
+.bigicon{flex:none;width:calc(var(--s)*.34);aspect-ratio:1;border-radius:22%;display:grid;place-items:center;
  background:linear-gradient(180deg,#2e3441,#1d212b);border:1px solid #404859;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 7px 0 -1px #0a0c10,0 0 40px -6px color-mix(in srgb,var(--accent) 60%,transparent);animation:pop .4s both}
 .bigicon img{width:70%;height:70%;object-fit:contain;display:block;animation:float 3.2s ease-in-out infinite}
 .bigicon img.sq,.slot img.sq{border-radius:20%}
-.info{grid-area:info;min-width:0;animation:swap .35s both}
-.tag{display:inline-block;font-size:.74rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent);border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);border-radius:99px;padding:2px 11px}
-.info h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;line-height:1.1;margin-top:10px}
-.info p{margin-top:6px;color:var(--mute);font-weight:600;line-height:1.45;font-size:.95rem;max-width:44ch}
-.launch{grid-area:launch;justify-self:start;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 22px;border-radius:14px;
- background:var(--accent);color:#0A0A0F;font-weight:800;font-size:1rem;text-decoration:none;
- box-shadow:0 4px 0 color-mix(in srgb,var(--accent) 50%,#000),0 12px 22px -10px var(--accent);transition:transform .12s,box-shadow .12s,filter .2s;animation:swap .35s both}
-.launch:hover{filter:brightness(1.08)}
-.launch:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--accent) 50%,#000)}
-.launch svg{width:16px;height:16px}
+.info{width:100%;min-width:0;animation:swap .35s both}
+.info h2{font-size:max(19px,calc(var(--s)*.075));font-weight:800;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info p{margin:calc(var(--s)*.02) auto 0;max-width:34ch;height:4.2em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+ color:var(--mute);font-weight:600;line-height:1.4;font-size:max(13px,calc(var(--s)*.043))}
+.hint{position:absolute;left:0;right:0;bottom:calc(var(--s)*.03);text-align:center;pointer-events:none;opacity:.7;color:var(--mute);font-size:max(11px,calc(var(--s)*.027));font-weight:800}
+.hint .t{display:none}
+@media (hover:none){.hint .m{display:none}.hint .t{display:inline}}
 
 /* tab bar */
-.tabs{display:flex;justify-content:space-between;align-items:stretch;height:46px;background:var(--panel2);border-bottom:1px solid var(--edge);padding:0 6px}
+.tabs{--tw:min(44px,calc((var(--s) - 28px)/8));flex:none;display:flex;justify-content:space-between;align-items:stretch;height:max(38px,calc(var(--s)*.11));background:var(--panel2);border-bottom:1px solid var(--edge);padding:0 6px}
 .tools,.cats{display:flex;align-items:stretch}
 .tools svg{width:20px;height:20px;stroke:var(--mute);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.tool{display:grid;place-items:center;width:38px;position:relative}
+.tool{display:grid;place-items:center;width:var(--tw);position:relative}
 .tool.sun svg{stroke:var(--accent)}
-.tab{display:grid;place-items:center;width:44px;position:relative}
+.tab{display:grid;place-items:center;width:var(--tw);position:relative}
 .tab svg{width:22px;height:22px;fill:none;stroke:var(--c);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.6;transition:opacity .2s,transform .2s}
 .tab.on svg{opacity:1;transform:translateY(-1px)}
 .tab::after,.tool.sun::after{content:"";position:absolute;left:20%;right:20%;bottom:5px;height:3px;border-radius:3px;background:var(--accent);opacity:0;transition:opacity .2s}
 .tab.on::after,.tool.sun::after{opacity:1}
 
-/* icon grid */
-.row{flex:1;display:grid;grid-template-columns:repeat(4,1fr);align-content:center;gap:clamp(8px,3%,16px);padding:clamp(12px,5%,28px)}
+/* icon grid: 4 columns x 3 rows = 12 slots */
+.row{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);align-content:center;gap:calc(var(--s)*.035);padding:calc(var(--s)*.06)}
 .slot,.ghost{aspect-ratio:1;border-radius:22%;min-width:0}
 .slot{display:grid;place-items:center;background:linear-gradient(180deg,#2e3441,#1d212b);border:1px solid #404859;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 5px 0 -1px #0a0c10,0 10px 16px -6px rgba(0,0,0,.7);
  transition:transform .22s cubic-bezier(.2,.8,.3,1.4),box-shadow .2s,border-color .2s;animation:rise .5s cubic-bezier(.2,.7,.2,1) backwards}
 .slot:nth-child(1){animation-delay:.05s}.slot:nth-child(2){animation-delay:.12s}.slot:nth-child(3){animation-delay:.19s}.slot:nth-child(4){animation-delay:.26s}.slot:nth-child(5){animation-delay:.33s}
 .slot img{width:68%;height:68%;object-fit:contain;display:block}
-.slot[aria-checked="true"]{transform:translateY(-4px) scale(1.07);border-color:var(--accent);
+.slot[aria-checked="true"]{transform:translateY(-3px) scale(1.07);border-color:var(--accent);
  box-shadow:0 0 0 2px var(--accent),0 0 24px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 1px 0 rgba(255,255,255,.2),0 8px 0 -1px #0a0c10}
 .slot:active{transform:translateY(2px) scale(.97)}
 .ghost{background:rgba(255,255,255,.03);box-shadow:inset 0 2px 6px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.05)}
-
-.keys{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 0 14px;color:var(--mute);font-size:.82rem;font-weight:600;white-space:nowrap}
-kbd{font:800 .76rem 'Nunito',sans-serif;min-width:28px;height:28px;padding:0 8px;display:inline-grid;place-items:center;border:1px solid var(--edge);border-bottom-width:3px;border-radius:8px;background:var(--panel);color:var(--text)}
 
 @keyframes rise{from{opacity:0;transform:translateY(18px)}}
 @keyframes swap{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
 @keyframes pop{from{opacity:0;transform:scale(.85)}60%{transform:scale(1.05)}to{opacity:1;transform:none}}
 @keyframes float{50%{transform:translateY(-5px)}}
 
-@media (max-width:720px){
- body{align-items:flex-start}
- .console{--w:100%;gap:22px;padding-top:6px}
- .top,.bottom{width:100%;aspect-ratio:auto}
- .bigicon{width:84px}
- .detail{grid-template-areas:"icon info" "launch launch";grid-template-columns:auto 1fr}
- .launch{justify-self:stretch}
- .info h2{margin-top:8px}
- .keys{display:none}
-}
-@media (hover:none){.keys{display:none}}
-@media (max-width:400px){.tab{width:38px}}
-@media (orientation:landscape) and (max-height:520px) and (min-width:600px){
- body{align-items:center}
- .console{--w:100%;flex-direction:row;align-items:center;gap:22px}
- .top{width:56%;aspect-ratio:auto}.bottom{width:44%;aspect-ratio:auto}
- .bigicon{width:92px}.info p{font-size:.88rem}
- .detail{padding:12px 18px;row-gap:10px}
- .launch{padding:9px 18px}
+/* short landscape (phone on its side): screens side by side, still square and centered */
+@media (orientation:landscape) and (max-height:560px){
+ :root{--s:max(200px,min(calc((100vw - 2*var(--pad) - 48px)/2),calc(100svh - 2*var(--pad) - 16px)))}
+ .console{flex-direction:row;gap:32px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -121,23 +105,18 @@ kbd{font:800 .76rem 'Nunito',sans-serif;min-width:28px;height:28px;padding:0 8px
     <h1 class="pill">Rüzgar Yalçın</h1>
    </div>
    <div class="r" aria-hidden="true">
-    <span class="clock" id="clock"></span>
+    <span class="clock"><span class="d" id="cd"></span><span id="ct"></span></span>
     <svg class="batt" viewBox="0 0 26 13"><rect x=".75" y=".75" width="22" height="11.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="24" y="4" width="2" height="5" rx="1" fill="currentColor"/><rect x="3" y="3" width="4.6" height="7" rx="1" fill="var(--accent)"/><rect x="9" y="3" width="4.6" height="7" rx="1" fill="var(--accent)"/><rect x="15" y="3" width="4.6" height="7" rx="1" fill="var(--accent)"/></svg>
    </div>
   </div>
-  <section class="detail" aria-live="polite">
+  <a class="detail" id="launch" target="_blank" rel="noopener">
    <div class="bigicon" id="bigicon"><img id="bigimg" alt=""></div>
-   <div class="info" id="info">
-    <span class="tag" id="tag"></span>
+   <div class="info" id="info" aria-live="polite">
     <h2 id="title"></h2>
     <p id="desc"></p>
    </div>
-   <a class="launch" id="launch" target="_blank" rel="noopener">
-    <span id="launch-label">Open</span>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
-   </a>
-  </section>
-  <p class="keys" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> select <kbd>Enter</kbd> open</p>
+  </a>
+  <p class="hint" aria-hidden="true"><span class="m">Click again or press Enter to open</span><span class="t">Tap again to open</span></p>
  </section>
 
  <section class="screen bottom">
@@ -161,7 +140,7 @@ kbd{font:800 .76rem 'Nunito',sans-serif;min-width:28px;height:28px;padding:0 8px
    <button class="slot" role="radio" aria-checked="false" data-i="2" title="IronLedger"><img class="sq" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAADGUlEQVR42u3dv00zMRjAYXLyAFGQAisgejIFGzADE1AyATOwQUomID2ipYQiM4QqCCElXO7v6/PzVEhfwhfZ/t2dkRGz+WK5O4NCVYYAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAKA31KuH/z16brW61b3b2bZOB80my+Wuxwn5eJqVeu1X++vQmi5+E8Z69zGuZry4v89eXWvZDRb/PvX5jbOWe4B9lf1rl9LeWOdSpgYjPWk7gAgABAACAAEAAIAAYAAQAAgADhi1KMQxw5OOb05LVHnOo05IMdOGn68rLI8Xktec11FHJC9HI/Xktdcj7YHqHPC0InPaYg81yn6wFBOBGPwUyCKJgAEAAIAAYAAQAAgABAACAAEAAIAAcA0dHIa1G920ac+11fV54er8+8w5vqq+vxwIiD6+rIHwCYYBAAFavVXIj3bE0XTnwa5A+ARCAQAAgABgABAACAAEAAIAAQAAgABgAAgZ4P9iaT1Zvvz9e3N+WDvPfR9OK6rcR5rrt0BQAAgAOhnD7DebGs9p60327PH58/Gz3Zt3nvo+9DfHqCrua77/jZ7u9Z3gP/+cxtPIq+vNMSHhKjryx4Am2AQQI+bSptPoq6vqu8PafETeX2lIUuFaOvLHgB7ABAACAAEAAIAAYAAQAAggK6ccrzVUeu8RZ9rdwDcASJeGdabrat/IXeBMec6RR4YynwUmvwd4JTTfU6a5i36XNsDYA8Q8crw+Pzp6l/IXWDMuU6RB4YyH4U8AoEAQAAgABAACAAEAOUG0PRMiXNHxtkdAKYQwKm/ZOHqb5wPSSVMDsZ5MneApmdKnDsyzvYA8MdsvljucvzgD3eXrvzGudwAwCMQCAAEAAIAAYAAQAAgABAACAAEAAIAAYAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABgON8guxr+vzy5WQAAAABJRU5ErkJggg==" alt=""><span class="sr">IronLedger</span></button>
    <button class="slot" role="radio" aria-checked="false" data-i="3" title="DreamBinder"><img class="sq" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMyZjhmN2YiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxMjNhMzUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0idXJsKCNnKSIvPjxyZWN0IHg9IjI0IiB5PSI0MiIgd2lkdGg9IjcwIiBoZWlnaHQ9IjEwOCIgcng9IjYiIGZpbGw9IiNmNGYxZWEiLz48cmVjdCB4PSIzMCIgeT0iNDgiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiNmNmM5NDUiLz48cmVjdCB4PSI2MSIgeT0iNDgiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiNlZTdkM2MiLz48cmVjdCB4PSIzMCIgeT0iODIiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiM2Y2MwNzAiLz48cmVjdCB4PSI2MSIgeT0iODIiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiM0ZmEzZTAiLz48cmVjdCB4PSIzMCIgeT0iMTE2IiB3aWR0aD0iMjciIGhlaWdodD0iMjgiIHJ4PSIzIiBmaWxsPSIjZTk4ZmI1Ii8+PHJlY3QgeD0iNjEiIHk9IjExNiIgd2lkdGg9IjI3IiBoZWlnaHQ9IjI4IiByeD0iMyIgZmlsbD0iIzhhNmZkMSIvPjxyZWN0IHg9Ijk4IiB5PSI0MiIgd2lkdGg9IjcwIiBoZWlnaHQ9IjEwOCIgcng9IjYiIGZpbGw9IiNmNGYxZWEiLz48cmVjdCB4PSIxMDQiIHk9IjQ4IiB3aWR0aD0iMjciIGhlaWdodD0iMjgiIHJ4PSIzIiBmaWxsPSIjZTU1NDVhIi8+PHJlY3QgeD0iMTM1IiB5PSI0OCIgd2lkdGg9IjI3IiBoZWlnaHQ9IjI4IiByeD0iMyIgZmlsbD0iIzdmZDZjMiIvPjxyZWN0IHg9IjEwNCIgeT0iODIiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiNmNmM5NDUiLz48cmVjdCB4PSIxMzUiIHk9IjgyIiB3aWR0aD0iMjciIGhlaWdodD0iMjgiIHJ4PSIzIiBmaWxsPSIjNmNjMDcwIi8+PHJlY3QgeD0iMTA0IiB5PSIxMTYiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiM0ZmEzZTAiLz48cmVjdCB4PSIxMzUiIHk9IjExNiIgd2lkdGg9IjI3IiBoZWlnaHQ9IjI4IiByeD0iMyIgZmlsbD0iI2VlN2QzYyIvPjwvc3ZnPg==" alt=""><span class="sr">DreamBinder</span></button>
    <button class="slot" role="radio" aria-checked="false" data-i="4" title="LiveFrame"><img class="sq" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzZjlkZjAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxMjMzNWMiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0idXJsKCNnKSIvPjxyZWN0IHg9IjIyIiB5PSIzNiIgd2lkdGg9IjE0OCIgaGVpZ2h0PSIxMTIiIHJ4PSIxMCIgZmlsbD0iI2Y0ZjFlYSIvPjxwYXRoIGQ9Ik0yMiA0NmExMCAxMCAwIDAgMSAxMC0xMGgxMjhhMTAgMTAgMCAwIDEgMTAgMTB2MTZIMjJ6IiBmaWxsPSIjZDlkZmU5Ii8+PGNpcmNsZSBjeD0iMzgiIGN5PSI0OSIgcj0iNSIgZmlsbD0iI2U1NTQ1YSIvPjxjaXJjbGUgY3g9IjU0IiBjeT0iNDkiIHI9IjUiIGZpbGw9IiNmNmM5NDUiLz48Y2lyY2xlIGN4PSI3MCIgY3k9IjQ5IiByPSI1IiBmaWxsPSIjNmNjMDcwIi8+PHJlY3QgeD0iMzQiIHk9Ijc0IiB3aWR0aD0iNjIiIGhlaWdodD0iMTAiIHJ4PSI0IiBmaWxsPSIjNGZhM2UwIi8+PHJlY3QgeD0iMzQiIHk9IjkyIiB3aWR0aD0iOTIiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI2MzY2FkNiIvPjxyZWN0IHg9IjM0IiB5PSIxMDUiIHdpZHRoPSI3NCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjYzNjYWQ2Ii8+PHJlY3QgeD0iMzQiIHk9IjEyMiIgd2lkdGg9IjM4IiBoZWlnaHQ9IjE0IiByeD0iNyIgZmlsbD0iI2Y2Yzk0NSIvPjxyZWN0IHg9IjExMCIgeT0iMTA0IiB3aWR0aD0iNjgiIGhlaWdodD0iNTQiIHJ4PSIxNCIgZmlsbD0iIzBlMjc0NCIgc3Ryb2tlPSIjZjRmMWVhIiBzdHJva2Utd2lkdGg9IjUiLz48cGF0aCBkPSJNMTMwIDEyMGwtMTAgMTEgMTAgMTFNMTU4IDEyMGwxMCAxMS0xMCAxMU0xNDggMTE3bC04IDI4IiBmaWxsPSJub25lIiBzdHJva2U9IiM3ZmQ2ZmYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+"></button>
-    <span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span>
+    <span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span>
   </div>
  </section>
 
@@ -171,15 +150,15 @@ kbd{font:800 .76rem 'Nunito',sans-serif;min-width:28px;height:28px;padding:0 8px
 (function(){
   var items=[
     {name:'Portfolio',accent:'#A78BFA',url:'https://rzgary.github.io/Portfolio',
-     desc:'Game designer and 3D artist. Stylized games and clean low-poly assets in Unity and Blender.',tag:'Games and 3D art'},
+     desc:'Game designer and 3D artist. Stylized games and low-poly assets.'},
     {name:'PokeCollect',accent:'#FF6B7A',url:'https://rzgary.github.io/PokeCollect/',
-     desc:'Track your Pokémon card collection and browse the Pokédex.',tag:'Collection tracker'},
+     desc:'Track your Pokémon card collection and browse the Pokédex.'},
     {name:'IronLedger',accent:'#E8A53A',url:'https://rzgary.github.io/IronLedger/',
-     desc:'Log workouts, see your personal bests and track your gym progress.',tag:'Gym log'},
+     desc:'Log workouts, see your personal bests and track gym progress.'},
     {name:'DreamBinder',accent:'#4ED1B8',url:'dream-binder.html',
-     desc:'A digital Pokémon card binder. Flip through your dream collection page by page, in two-page spreads.',tag:'Card binder'},
+     desc:'A digital Pokémon card binder. Flip through your dream collection.'},
     {name:'LiveFrame',accent:'#5CB8FF',url:'html-viewer.html',
-     desc:'Open any HTML file full screen. Edit it live, check phone and tablet sizes, then export it as a PDF.',tag:'HTML viewer'}
+     desc:'Open any HTML file full screen. Edit live, test phone sizes, export to PDF.'}
   ];
   var slots=[].slice.call(document.querySelectorAll('.slot'));
   var tabs=[].slice.call(document.querySelectorAll('.tab'));
@@ -198,11 +177,9 @@ kbd{font:800 .76rem 'Nunito',sans-serif;min-width:28px;height:28px;padding:0 8px
     document.body.style.setProperty('--accent',it.accent);
     document.getElementById('title').textContent=it.name;
     document.getElementById('desc').textContent=it.desc;
-    document.getElementById('tag').textContent=it.tag;
-    document.getElementById('launch-label').textContent='Open '+it.name;
     bigimg.src=src.src;bigimg.className=src.className;
     launch.href=it.url;
-    restart(document.getElementById('info'));restart(launch);restart(document.getElementById('bigicon'));
+    restart(document.getElementById('info'));restart(document.getElementById('bigicon'));
   }
 
   slots.forEach(function(s,n){
@@ -221,7 +198,8 @@ kbd{font:800 .76rem 'Nunito',sans-serif;min-width:28px;height:28px;padding:0 8px
 
   var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   function tick(){var d=new Date(),p=function(n){return String(n).padStart(2,'0')};
-    document.getElementById('clock').textContent=p(d.getDate())+'/'+p(d.getMonth()+1)+' ('+days[d.getDay()]+') '+p(d.getHours())+':'+p(d.getMinutes())}
+    document.getElementById('cd').textContent=p(d.getDate())+'/'+p(d.getMonth()+1)+' ('+days[d.getDay()]+') ';
+    document.getElementById('ct').textContent=p(d.getHours())+':'+p(d.getMinutes())}
   tick();setInterval(tick,20000);
 
   slots.forEach(function(s,n){s.tabIndex=n===0?0:-1});
