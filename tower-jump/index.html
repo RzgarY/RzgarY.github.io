@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tower Jump</title>
+<script>
+/* All game audio goes through one master gain at 25% (= 75% quieter). Must run before Unity creates its AudioContext. */
+(function(){
+  var VOL=0.25,ctxs=[];
+  ['AudioContext','webkitAudioContext'].forEach(function(name){
+    var Orig=window[name];if(!Orig)return;
+    function Wrapped(opts){
+      var c=new Orig(opts);
+      try{var g=c.createGain();g.gain.value=VOL;g.connect(c.destination);Object.defineProperty(c,'destination',{value:g,configurable:true})}catch(e){}
+      ctxs.push(c);return c;
+    }
+    Wrapped.prototype=Orig.prototype;window[name]=Wrapped;
+  });
+  window.__resumeAudio=function(){ctxs.forEach(function(c){try{if(c.state==='suspended')c.resume()}catch(e){}})};
+  window.__stopAudio=function(){ctxs.forEach(function(c){try{c.close()}catch(e){}})};
+  /* tell the hub about real Space / Escape presses so its jump button can mirror them */
+  function tell(m){try{parent.postMessage(m,'*')}catch(e){}}
+  window.addEventListener('keydown',function(e){
+    if(e.code==='Space'&&!e.repeat)tell({tj:'down'});else if(e.key==='Escape')tell({tj:'exit'});
+  },true);
+  window.addEventListener('keyup',function(e){if(e.code==='Space')tell({tj:'up'})},true);
+})();
+</script>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#07080B}
+#unity-canvas{display:block;width:100%;height:100%;background:#07080B;outline:none}
+#bar{position:absolute;left:20%;right:20%;top:50%;height:8px;margin-top:-4px;border-radius:8px;background:#1d212b;overflow:hidden}
+#bar i{display:block;height:100%;width:0;background:#7BE06A;transition:width .15s}
+#warn{position:absolute;left:0;right:0;bottom:0;font:600 12px system-ui,sans-serif;color:#fff}
+#warn div{padding:8px 10px}
+</style>
+</head>
+<body>
+<canvas id="unity-canvas" tabindex="-1"></canvas>
+<div id="bar"><i id="fill"></i></div>
+<div id="warn"></div>
+<script src="Build/html.loader.js"></script>
+<script>
+(function(){
+  var warn=document.getElementById('warn');
+  function banner(msg,type){
+    var d=document.createElement('div');d.innerHTML=msg;
+    d.style.background=type==='error'?'#c0392b':'#a67c00';warn.appendChild(d);
+    if(type!=='error')setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d)},5000);
+  }
+  createUnityInstance(document.getElementById('unity-canvas'),{
+    dataUrl:'Build/html.data',
+    frameworkUrl:'Build/html.framework.js',
+    codeUrl:'Build/html.wasm',
+    streamingAssetsUrl:'StreamingAssets',
+    companyName:'Rüzgar Yalçın',productName:'Tower Jump',productVersion:'0.1',
+    showBanner:banner
+  },function(p){document.getElementById('fill').style.width=(100*p)+'%'})
+  .then(function(){document.getElementById('bar').style.display='none'})
+  .catch(function(m){banner(String(m),'error')});
+})();
+</script>
+</body>
+</html>

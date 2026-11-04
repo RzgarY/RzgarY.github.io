@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Rüzgar Yalçın: Projects</title>
-<meta name="description" content="Projects by Rüzgar Yalçın: a game and 3D art portfolio, a Pokémon card tracker, a digital card binder, a gym log and an HTML viewer.">
+<meta name="description" content="Projects by Rüzgar Yalçın: a game and 3D art portfolio, a Pokémon card tracker, a digital card binder, a gym log, an HTML viewer and a one-button tower climb game.">
 <meta name="theme-color" content="#0b0d12">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -127,6 +127,28 @@ button.tool:focus-visible{outline-offset:-4px}
 .launchicon{position:fixed;z-index:100;margin:0;pointer-events:none}
 .launchicon,.launchicon img{animation:none!important}
 
+/* Tower Jump: game on the top screen, controls on the bottom */
+.detail{cursor:pointer}
+.gamewrap,.pad{display:none}
+.gamewrap{position:relative;flex:1;min-height:0;background:#07080B}
+.gamewrap iframe{display:block;width:100%;height:100%;border:0;background:#07080B}
+.console.playing .gamewrap{display:block}
+.console.playing .detail,.console.playing .profile,.console.playing .hint,.console.playing .tabs,.console.playing .row{display:none}
+.console.playing .pad{display:flex}
+.pad{position:relative;flex:1;min-height:0;flex-direction:column;align-items:center;justify-content:center;padding-top:calc(var(--s)*.06)}
+.menubtn{position:absolute;left:calc(var(--s)*.045);top:calc(var(--s)*.045);display:flex;align-items:center;gap:6px;padding:.45em .95em .45em .7em;border-radius:99px;
+ font-weight:800;font-size:max(12px,calc(var(--s)*.036));background:linear-gradient(180deg,#2e3441,#1d212b);border:1px solid #404859;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 3px 0 -1px #0a0c10}
+.menubtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.menubtn:active{transform:translateY(2px)}
+.jump{width:calc(var(--s)*.58);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;color:#0A0A0F;font-weight:800;font-size:calc(var(--s)*.085);
+ background:radial-gradient(circle at 50% 28%,color-mix(in srgb,var(--accent) 70%,#fff),var(--accent) 55%,color-mix(in srgb,var(--accent) 72%,#000));
+ border:1px solid color-mix(in srgb,var(--accent) 55%,#fff);
+ box-shadow:inset 0 2px 0 rgba(255,255,255,.35),0 10px 0 -1px color-mix(in srgb,var(--accent) 45%,#000),0 20px 28px -8px rgba(0,0,0,.7);
+ transition:transform .07s,box-shadow .07s;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.jump.down{transform:translateY(8px);box-shadow:inset 0 2px 0 rgba(255,255,255,.25),0 2px 0 -1px color-mix(in srgb,var(--accent) 45%,#000),0 6px 14px -8px rgba(0,0,0,.7)}
+.padhint{position:absolute;left:0;right:0;bottom:calc(var(--s)*.03);text-align:center;color:var(--mute);opacity:.7;font-weight:800;font-size:max(11px,calc(var(--s)*.027))}
+
 /* short landscape (phone on its side): screens side by side, still square and centered */
 @media (orientation:landscape) and (max-height:560px){
  :root{--s:max(200px,min(calc((100vw - 2*var(--pad) - 48px)/2),calc(100svh - 2*var(--pad) - 16px)))}
@@ -168,6 +190,7 @@ button.tool:focus-visible{outline-offset:-4px}
     <p id="desc"></p>
    </div>
   </a>
+  <div class="gamewrap"><iframe id="gameframe" title="Tower Jump" allow="autoplay; fullscreen" tabindex="-1"></iframe></div>
   <p class="hint" aria-hidden="true"><span class="h-app"><span class="m">Click again or press Enter to open</span><span class="t">Tap again to open</span></span><span class="h-home"><span class="m">Hover an icon below to preview</span><span class="t">Tap an icon below to preview</span></span></p>
  </section>
 
@@ -183,6 +206,7 @@ button.tool:focus-visible{outline-offset:-4px}
     <button class="tab" tabindex="-1" data-i="2" style="--c:#E8A53A"><svg viewBox="0 0 24 24"><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/></svg></button>
     <button class="tab" tabindex="-1" data-i="3" style="--c:#4ED1B8"><svg viewBox="0 0 24 24"><path d="M12 6v13M12 6c-2-1.5-5-2-8-1.5V18c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6z"/></svg></button>
     <button class="tab" tabindex="-1" data-i="4" style="--c:#5CB8FF"><svg viewBox="0 0 24 24"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 5l-4 14"/></svg></button>
+    <button class="tab" tabindex="-1" data-i="5" style="--c:#7BE06A"><svg viewBox="0 0 24 24"><path d="M12 20V5M6 11l6-6 6 6"/></svg></button>
    </div>
   </div>
   <div class="row" role="radiogroup" aria-label="Projects">
@@ -191,7 +215,13 @@ button.tool:focus-visible{outline-offset:-4px}
    <button class="slot" role="radio" aria-checked="false" data-i="2" title="IronLedger"><img class="sq" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAADGUlEQVR42u3dv00zMRjAYXLyAFGQAisgejIFGzADE1AyATOwQUomID2ipYQiM4QqCCElXO7v6/PzVEhfwhfZ/t2dkRGz+WK5O4NCVYYAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAKA31KuH/z16brW61b3b2bZOB80my+Wuxwn5eJqVeu1X++vQmi5+E8Z69zGuZry4v89eXWvZDRb/PvX5jbOWe4B9lf1rl9LeWOdSpgYjPWk7gAgABAACAAEAAIAAYAAQAAgADhi1KMQxw5OOb05LVHnOo05IMdOGn68rLI8Xktec11FHJC9HI/Xktdcj7YHqHPC0InPaYg81yn6wFBOBGPwUyCKJgAEAAIAAYAAQAAgABAACAAEAAIAAcA0dHIa1G920ac+11fV54er8+8w5vqq+vxwIiD6+rIHwCYYBAAFavVXIj3bE0XTnwa5A+ARCAQAAgABgABAACAAEAAIAAQAAgABgAAgZ4P9iaT1Zvvz9e3N+WDvPfR9OK6rcR5rrt0BQAAgAOhnD7DebGs9p60327PH58/Gz3Zt3nvo+9DfHqCrua77/jZ7u9Z3gP/+cxtPIq+vNMSHhKjryx4Am2AQQI+bSptPoq6vqu8PafETeX2lIUuFaOvLHgB7ABAACAAEAAIAAYAAQAAggK6ccrzVUeu8RZ9rdwDcASJeGdabrat/IXeBMec6RR4YynwUmvwd4JTTfU6a5i36XNsDYA8Q8crw+Pzp6l/IXWDMuU6RB4YyH4U8AoEAQAAgABAACAAEAOUG0PRMiXNHxtkdAKYQwKm/ZOHqb5wPSSVMDsZ5MneApmdKnDsyzvYA8MdsvljucvzgD3eXrvzGudwAwCMQCAAEAAIAAYAAQAAgABAACAAEAAIAAYAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABgON8guxr+vzy5WQAAAABJRU5ErkJggg==" alt=""><span class="sr">IronLedger</span></button>
    <button class="slot" role="radio" aria-checked="false" data-i="3" title="DreamBinder"><img class="sq" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMyZjhmN2YiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxMjNhMzUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0idXJsKCNnKSIvPjxyZWN0IHg9IjI0IiB5PSI0MiIgd2lkdGg9IjcwIiBoZWlnaHQ9IjEwOCIgcng9IjYiIGZpbGw9IiNmNGYxZWEiLz48cmVjdCB4PSIzMCIgeT0iNDgiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiNmNmM5NDUiLz48cmVjdCB4PSI2MSIgeT0iNDgiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiNlZTdkM2MiLz48cmVjdCB4PSIzMCIgeT0iODIiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiM2Y2MwNzAiLz48cmVjdCB4PSI2MSIgeT0iODIiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiM0ZmEzZTAiLz48cmVjdCB4PSIzMCIgeT0iMTE2IiB3aWR0aD0iMjciIGhlaWdodD0iMjgiIHJ4PSIzIiBmaWxsPSIjZTk4ZmI1Ii8+PHJlY3QgeD0iNjEiIHk9IjExNiIgd2lkdGg9IjI3IiBoZWlnaHQ9IjI4IiByeD0iMyIgZmlsbD0iIzhhNmZkMSIvPjxyZWN0IHg9Ijk4IiB5PSI0MiIgd2lkdGg9IjcwIiBoZWlnaHQ9IjEwOCIgcng9IjYiIGZpbGw9IiNmNGYxZWEiLz48cmVjdCB4PSIxMDQiIHk9IjQ4IiB3aWR0aD0iMjciIGhlaWdodD0iMjgiIHJ4PSIzIiBmaWxsPSIjZTU1NDVhIi8+PHJlY3QgeD0iMTM1IiB5PSI0OCIgd2lkdGg9IjI3IiBoZWlnaHQ9IjI4IiByeD0iMyIgZmlsbD0iIzdmZDZjMiIvPjxyZWN0IHg9IjEwNCIgeT0iODIiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiNmNmM5NDUiLz48cmVjdCB4PSIxMzUiIHk9IjgyIiB3aWR0aD0iMjciIGhlaWdodD0iMjgiIHJ4PSIzIiBmaWxsPSIjNmNjMDcwIi8+PHJlY3QgeD0iMTA0IiB5PSIxMTYiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyOCIgcng9IjMiIGZpbGw9IiM0ZmEzZTAiLz48cmVjdCB4PSIxMzUiIHk9IjExNiIgd2lkdGg9IjI3IiBoZWlnaHQ9IjI4IiByeD0iMyIgZmlsbD0iI2VlN2QzYyIvPjwvc3ZnPg==" alt=""><span class="sr">DreamBinder</span></button>
    <button class="slot" role="radio" aria-checked="false" data-i="4" title="LiveFrame"><img class="sq" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzZjlkZjAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxMjMzNWMiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0idXJsKCNnKSIvPjxyZWN0IHg9IjIyIiB5PSIzNiIgd2lkdGg9IjE0OCIgaGVpZ2h0PSIxMTIiIHJ4PSIxMCIgZmlsbD0iI2Y0ZjFlYSIvPjxwYXRoIGQ9Ik0yMiA0NmExMCAxMCAwIDAgMSAxMC0xMGgxMjhhMTAgMTAgMCAwIDEgMTAgMTB2MTZIMjJ6IiBmaWxsPSIjZDlkZmU5Ii8+PGNpcmNsZSBjeD0iMzgiIGN5PSI0OSIgcj0iNSIgZmlsbD0iI2U1NTQ1YSIvPjxjaXJjbGUgY3g9IjU0IiBjeT0iNDkiIHI9IjUiIGZpbGw9IiNmNmM5NDUiLz48Y2lyY2xlIGN4PSI3MCIgY3k9IjQ5IiByPSI1IiBmaWxsPSIjNmNjMDcwIi8+PHJlY3QgeD0iMzQiIHk9Ijc0IiB3aWR0aD0iNjIiIGhlaWdodD0iMTAiIHJ4PSI0IiBmaWxsPSIjNGZhM2UwIi8+PHJlY3QgeD0iMzQiIHk9IjkyIiB3aWR0aD0iOTIiIGhlaWdodD0iNyIgcng9IjMuNSIgZmlsbD0iI2MzY2FkNiIvPjxyZWN0IHg9IjM0IiB5PSIxMDUiIHdpZHRoPSI3NCIgaGVpZ2h0PSI3IiByeD0iMy41IiBmaWxsPSIjYzNjYWQ2Ii8+PHJlY3QgeD0iMzQiIHk9IjEyMiIgd2lkdGg9IjM4IiBoZWlnaHQ9IjE0IiByeD0iNyIgZmlsbD0iI2Y2Yzk0NSIvPjxyZWN0IHg9IjExMCIgeT0iMTA0IiB3aWR0aD0iNjgiIGhlaWdodD0iNTQiIHJ4PSIxNCIgZmlsbD0iIzBlMjc0NCIgc3Ryb2tlPSIjZjRmMWVhIiBzdHJva2Utd2lkdGg9IjUiLz48cGF0aCBkPSJNMTMwIDEyMGwtMTAgMTEgMTAgMTFNMTU4IDEyMGwxMCAxMS0xMCAxMU0xNDggMTE3bC04IDI4IiBmaWxsPSJub25lIiBzdHJva2U9IiM3ZmQ2ZmYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+" alt=""><span class="sr">LiveFrame</span></button>
-    <span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span>
+   <button class="slot" role="radio" aria-checked="false" data-i="5" title="Tower Jump"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB4PSI0OCIgeT0iMTQyIiB3aWR0aD0iOTYiIGhlaWdodD0iMzAiIHJ4PSI3IiBmaWxsPSIjN0JFMDZBIi8+PHJlY3QgeD0iNjIiIHk9IjEwNiIgd2lkdGg9IjY4IiBoZWlnaHQ9IjMwIiByeD0iNyIgZmlsbD0iIzVDQzI0RSIvPjxyZWN0IHg9Ijc2IiB5PSI3MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjMwIiByeD0iNyIgZmlsbD0iIzNGQTAzQSIvPjxyZWN0IHg9IjgyIiB5PSIyMiIgd2lkdGg9IjI4IiBoZWlnaHQ9IjI4IiByeD0iNyIgZmlsbD0iI0VDRUVGMyIvPjxwYXRoIGQ9Ik03MCAzMGgtMTJNNjggNDBINTRNNzAgNTBINjAiIHN0cm9rZT0iI0VDRUVGMyIgc3Ryb2tlLW9wYWNpdHk9Ii41NSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNODkgMzR2NE0xMDMgMzR2NCIgc3Ryb2tlPSIjMEEwQTBGIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==" alt=""><span class="sr">Tower Jump</span></button>
+    <span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span><span class="ghost" aria-hidden="true"></span>
+  </div>
+  <div class="pad">
+   <button type="button" class="menubtn" id="menubtn" aria-label="Back to menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Menu</span></button>
+   <button type="button" class="jump" id="jump" tabindex="-1" aria-label="Jump (Space)"><span>Jump</span></button>
+   <p class="padhint">Tap or hold. Space works too.</p>
   </div>
  </section>
 
@@ -209,7 +239,9 @@ button.tool:focus-visible{outline-offset:-4px}
     {name:'DreamBinder',accent:'#4ED1B8',url:'dream-binder.html',
      desc:'A digital Pokémon card binder. Flip through your dream collection.'},
     {name:'LiveFrame',accent:'#5CB8FF',url:'html-viewer.html',
-     desc:'Open any HTML file full screen. Edit live, test phone sizes, export to PDF.'}
+     desc:'Open any HTML file full screen. Edit live, test phone sizes, export to PDF.'},
+    {name:'Tower Jump',accent:'#7BE06A',url:'',game:true,
+     desc:'One-button tower climb. Tap or hold to jump as high as you can.'}
   ];
   var HOME_ACCENT='#A78BFA';
   var n=items.length,root=document.documentElement;
@@ -275,7 +307,7 @@ button.tool:focus-visible{outline-offset:-4px}
     document.getElementById('title').textContent=it.name;
     document.getElementById('desc').textContent=it.desc;
     bigimg.src=src.src;bigimg.className=src.className;
-    launch.href=it.url;
+    if(it.url)launch.href=it.url;else launch.removeAttribute('href');
     restart(info);restart(bigicon);
     sfx.tick();
   }
@@ -283,7 +315,9 @@ button.tool:focus-visible{outline-offset:-4px}
   /* ---------- 2. launch animation ---------- */
   function go(){
     var href=launch.href;
-    if(launching||cur<0||!href)return;
+    if(launching||cur<0)return;
+    if(items[cur].game){startGame();return}
+    if(!href)return;
     launching=true;sfx.pop();
     if(reduce){location.href=href;return}
     var r=bigicon.getBoundingClientRect(),vw=innerWidth,vh=innerHeight;
@@ -314,17 +348,66 @@ button.tool:focus-visible{outline-offset:-4px}
     [].forEach.call(document.querySelectorAll('.launchfx,.launchicon'),function(el){el.remove()});
   });
 
+  /* ---------- Tower Jump (embedded game) ---------- */
+  var GAME_URL='tower-jump/index.html';
+  var consoleEl=document.querySelector('.console'),gameFrame=document.getElementById('gameframe');
+  var jumpBtn=document.getElementById('jump'),menuBtn=document.getElementById('menubtn');
+  var pillBtn=document.querySelector('.pill button'),PILL_TEXT=pillBtn.textContent;
+  var playing=false,spaceDown=false;
+  function gw(){try{return gameFrame.contentWindow}catch(e){return null}}
+  function resumeAudio(){try{var w=gw();if(w&&w.__resumeAudio)w.__resumeAudio()}catch(e){}}
+  function sendKey(type){   /* the game plays on Space: forward the big button as a Space key */
+    var w=gw();if(!w||!w.document)return;
+    try{
+      var ev=new w.KeyboardEvent(type,{key:' ',code:'Space',keyCode:32,which:32,bubbles:true,cancelable:true});
+      if(ev.keyCode!==32){Object.defineProperty(ev,'keyCode',{get:function(){return 32}});Object.defineProperty(ev,'which',{get:function(){return 32}})}
+      (w.document.getElementById('unity-canvas')||w.document).dispatchEvent(ev);
+    }catch(e){}
+  }
+  function pressSpace(){if(spaceDown||!playing)return;spaceDown=true;jumpBtn.classList.add('down');resumeAudio();sendKey('keydown')}
+  function releaseSpace(){if(!spaceDown)return;spaceDown=false;jumpBtn.classList.remove('down');sendKey('keyup')}
+  function startGame(){
+    if(playing)return;
+    playing=true;sfx.pop();
+    consoleEl.classList.add('playing');pillBtn.textContent=items[cur].name;
+    gameFrame.onload=function(){try{gameFrame.contentWindow.focus()}catch(e){}resumeAudio()};
+    gameFrame.src=GAME_URL;   /* loaded only now, so the 40 MB build never slows the hub */
+  }
+  function exitGame(){
+    if(!playing)return;
+    releaseSpace();playing=false;
+    try{var w=gw();if(w&&w.__stopAudio)w.__stopAudio()}catch(e){}
+    gameFrame.onload=null;gameFrame.src='about:blank';   /* unloads the game and its music */
+    consoleEl.classList.remove('playing');pillBtn.textContent=PILL_TEXT;sfx.back();
+    if(cur>=0)slots[cur].focus();
+  }
+  jumpBtn.addEventListener('pointerdown',function(e){e.preventDefault();try{jumpBtn.setPointerCapture(e.pointerId)}catch(_){}pressSpace()});
+  ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){jumpBtn.addEventListener(t,releaseSpace)});
+  jumpBtn.addEventListener('contextmenu',function(e){e.preventDefault()});
+  menuBtn.addEventListener('click',exitGame);
+  window.addEventListener('blur',releaseSpace);
+  document.addEventListener('keyup',function(e){if(playing&&e.code==='Space'){e.preventDefault();releaseSpace()}});
+  window.addEventListener('message',function(e){   /* real key presses inside the game */
+    var d=e.data;if(!playing||e.source!==gw()||!d||!d.tj)return;
+    if(d.tj==='exit')exitGame();else jumpBtn.classList.toggle('down',d.tj==='down');
+  });
+
   /* ---------- input wiring ---------- */
   slots.forEach(function(s,k){
     s.addEventListener('click',function(){if(k===cur){launch.click()}else{select(k)}});
     s.addEventListener('mouseenter',function(){if(window.matchMedia('(hover:hover)').matches)select(k)});
   });
   tabs.forEach(function(t,k){t.addEventListener('click',function(){select(k)})});
-  document.querySelector('.pill').addEventListener('click',function(){home()});
+  document.querySelector('.pill').addEventListener('click',function(){if(playing)exitGame();else home()});
 
   document.addEventListener('keydown',function(e){
     if(e.ctrlKey||e.metaKey||e.altKey||launching)return;
     var k=e.key;
+    if(playing){
+      if(e.code==='Space'){e.preventDefault();if(!e.repeat)pressSpace()}
+      else if(k==='Escape'){e.preventDefault();exitGame()}
+      return;
+    }
     if(k==='ArrowRight'||k==='d'||k==='D'){select(cur<0?0:cur+1);slots[cur].focus();e.preventDefault()}
     else if(k==='ArrowLeft'||k==='a'||k==='A'){select(cur<0?n-1:cur-1);slots[cur].focus();e.preventDefault()}
     else if(k>='1'&&k<=String(n)){select(+k-1);slots[cur].focus()}
