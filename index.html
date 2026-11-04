@@ -349,21 +349,15 @@ button.tool:focus-visible{outline-offset:-4px}
   });
 
   /* ---------- Tower Jump (embedded game) ---------- */
-  var GAME_URL='tower-jump/index.html';
+  var GAME_URL='https://rzgary.github.io/TowerJump/';   /* the game lives in its own repo */
   var consoleEl=document.querySelector('.console'),gameFrame=document.getElementById('gameframe');
   var jumpBtn=document.getElementById('jump'),menuBtn=document.getElementById('menubtn');
   var pillBtn=document.querySelector('.pill button'),PILL_TEXT=pillBtn.textContent;
   var playing=false,spaceDown=false;
   function gw(){try{return gameFrame.contentWindow}catch(e){return null}}
-  function resumeAudio(){try{var w=gw();if(w&&w.__resumeAudio)w.__resumeAudio()}catch(e){}}
-  function sendKey(type){   /* the game plays on Space: forward the big button as a Space key */
-    var w=gw();if(!w||!w.document)return;
-    try{
-      var ev=new w.KeyboardEvent(type,{key:' ',code:'Space',keyCode:32,which:32,bubbles:true,cancelable:true});
-      if(ev.keyCode!==32){Object.defineProperty(ev,'keyCode',{get:function(){return 32}});Object.defineProperty(ev,'which',{get:function(){return 32}})}
-      (w.document.getElementById('unity-canvas')||w.document).dispatchEvent(ev);
-    }catch(e){}
-  }
+  function post(m){try{var w=gw();if(w)w.postMessage(m,'*')}catch(e){}}
+  function resumeAudio(){post({tj:'resume'})}
+  function sendKey(type){post({tj:'key',down:type==='keydown'})}   /* the game plays on Space */
   function pressSpace(){if(spaceDown||!playing)return;spaceDown=true;jumpBtn.classList.add('down');resumeAudio();sendKey('keydown')}
   function releaseSpace(){if(!spaceDown)return;spaceDown=false;jumpBtn.classList.remove('down');sendKey('keyup')}
   function startGame(){
@@ -371,12 +365,12 @@ button.tool:focus-visible{outline-offset:-4px}
     playing=true;sfx.pop();
     consoleEl.classList.add('playing');pillBtn.textContent=items[cur].name;
     gameFrame.onload=function(){try{gameFrame.contentWindow.focus()}catch(e){}resumeAudio()};
-    gameFrame.src=GAME_URL;   /* loaded only now, so the 40 MB build never slows the hub */
+    gameFrame.src=GAME_URL;   /* loaded only now, so the big build never slows the hub */
   }
   function exitGame(){
     if(!playing)return;
     releaseSpace();playing=false;
-    try{var w=gw();if(w&&w.__stopAudio)w.__stopAudio()}catch(e){}
+    post({tj:'stop'});
     gameFrame.onload=null;gameFrame.src='about:blank';   /* unloads the game and its music */
     consoleEl.classList.remove('playing');pillBtn.textContent=PILL_TEXT;sfx.back();
     if(cur>=0)slots[cur].focus();
