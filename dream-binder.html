@@ -124,7 +124,14 @@ h2{margin:0;font-size:1.15rem;font-weight:800}
 .bp{position:absolute;inset:0;padding:6.8cqw 4.5cqw;display:grid;grid-template:repeat(var(--r),1fr)/repeat(var(--c),1fr);gap:2.2cqw}
 .cell{position:relative;border-radius:2cqw;overflow:hidden;background:#25252b;min-height:0}.cell.empty{background:#1f1f25}
 .cell img{position:relative;width:100%;height:100%;object-fit:cover;display:block;transition:filter .2s,opacity .2s}
-.cell .fb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.6cqw;color:#8A8F9E;padding:2px}
+.cell .fb{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:.8cqw;text-align:center;color:#8A8F9E;padding:3cqw}
+.cell .fb b{font-size:2.3cqw;color:#d5d8e2;font-weight:800}.cell .fb small{font-size:1.6cqw;line-height:1.3}
+.cell.noimg{background:linear-gradient(160deg,#2c2c36,#1c1c22);box-shadow:inset 0 0 0 .3cqw #3d3d4a}
+.cell.noimg .fb{display:flex}.cell.miss.noimg .fb{opacity:.45}
+.cell.alt::before{content:"alt art";position:absolute;right:1cqw;top:1cqw;z-index:2;font-size:1.3cqw;font-weight:800;padding:.4cqw .8cqw;border-radius:.8cqw;background:rgba(0,0,0,.65);color:#ffd36b;pointer-events:none}
+.tile .cell.alt::before{display:none}
+.cell.miss.noimg::after{top:80%}
+#ghost .fb{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;color:#8A8F9E;font-size:11px;padding:8px}#ghost .fb b{font-size:13px;color:#d5d8e2}
 .cell.miss img{filter:grayscale(1) brightness(.4);opacity:.5}
 .cell.miss::after{content:"MISSING";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-10deg);z-index:1;font-weight:800;font-size:2.3cqw;line-height:1;letter-spacing:.18em;color:#fff;background:rgba(0,0,0,.6);border:.3cqw solid rgba(255,255,255,.45);padding:.9cqw 1.4cqw;border-radius:1cqw;pointer-events:none}
 .tile .cell.miss::after{display:none}
@@ -177,11 +184,12 @@ body.editing #book .cell.empty{outline:.35cqw dashed color-mix(in srgb,var(--acc
  <div class="ph"><h2>Cards</h2><button class="btn" id="pclose" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
  <div class="pst"><span id="pstat"></span><div class="barw"><div id="pbar"></div></div></div>
  <input id="q" type="search" placeholder="Search name, set or number…" autocomplete="off" aria-label="Search cards">
- <div class="chips" id="chips"><button data-f="all" class="on">All</button><button data-f="miss">Missing</button><button data-f="have">Owned</button></div>
+ <div class="chips" id="chips"><button data-f="all" class="on">All</button><button data-f="miss">Missing</button><button data-f="have">Owned</button><button data-f="noimg">No image</button></div>
  <ul id="list"></ul>
  <div class="pf">
   <button class="btn sm" id="wCopy">Copy missing list</button><button class="btn sm" id="wDl">Download .txt</button>
   <button class="btn sm" id="wClr">Clear all missing</button><button class="btn sm" id="wRst">Reset binder</button>
+  <button class="btn sm" id="wChk">Check all images</button><button class="btn sm" id="wImg">Retry images</button>
  </div>
 </aside>
 <div id="drop">Drop a binder .json to import</div>
@@ -201,7 +209,50 @@ const idb=()=>new Promise((res,rej)=>{const q=indexedDB.open('dreambinder',1);q.
 const idbSet=v=>(save('binder-dirty','1'),idb()).then(d=>d.transaction('k','readwrite').objectStore('k').put(v,'D')).catch(()=>{});
 const idbGet=()=>idb().then(d=>new Promise(r=>{const q=d.transaction('k').objectStore('k').get('D');q.onsuccess=()=>r(q.result);q.onerror=()=>r()})).catch(()=>null);
 let EXT={};try{EXT=JSON.parse(load('binder-ext')||'{}')}catch(e){}
-function cimg(src,lo){const i=new Image(),pn=EXT[src]==='png',w=src+(lo?'/low.webp':'/high.webp'),p=src+(lo?'/low.png':'/high.png'),u=pn?[p,w]:[w,p];let n=0;i.onload=()=>{if(!pn&&i.src.endsWith('.png')){EXT[src]='png';save('binder-ext',JSON.stringify(EXT))}};i.draggable=false;if(lo)i.loading='lazy';i.src=u[0];i.onerror=()=>{if(++n<2)i.src=u[1];else i.style.visibility='hidden'};return i}
+// ===== robust card images =====
+// chain: cached/own URL (webp,png,low,high) -> local cards/<id>.* -> tcgdex API lookup (fixed URL or same-art alt) -> placeholder
+let IMGMAP={};try{IMGMAP=JSON.parse(load('binder-imgmap')||'{}')}catch(e){}
+const saveMap=()=>save('binder-imgmap',JSON.stringify(IMGMAP)),NOIMG=new Set(),FAILED=new Set(),INFL={},API='https://api.tcgdex.net/v2/',DAY=864e5;
+const qUrls=(b,lo,tag)=>{const e=EXT[b]==='png'?['png','webp']:['webp','png'];return (lo?['low','high']:['high','low']).flatMap(q=>e.map(x=>`${b}/${q}.${x}${tag||''}`))};
+const localUrls=id=>['webp','png','jpg'].map(e=>`cards/${encodeURIComponent(id)}.${e}`);
+const tryList=(i,urls)=>new Promise(res=>{let k=0;const go=()=>{if(k>=urls.length){i.onload=i.onerror=null;return res(false)}i.onload=()=>{i.onload=i.onerror=null;res(true)};i.onerror=go;i.src=urls[k++]};go()});
+const jget=async u=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),12000);try{const r=await fetch(u,{signal:c.signal});return r.status===404?{nf:1}:r.ok?{j:await r.json()}:{err:1}}catch(e){return{err:1}}finally{clearTimeout(t)}};
+async function findAlt(j,lang){ // same artwork printed in another language: same dex no. + illustrator + hp + category + stage, must be unique
+ const dex=(j.dexId||[])[0];if(!dex||!j.illustrator)return null;const seen=new Set(),hits=[];let err=false;
+ for(const L of ['en','ja'].filter(x=>x!==lang)){
+  const r=await jget(`${API}${L}/cards?dexId=${dex}`);if(r.err){err=true;continue}if(!Array.isArray(r.j)||r.j.length>600)continue;
+  const ds=await Promise.all(r.j.filter(c=>c.image).slice(0,40).map(c=>jget(`${API}${L}/cards/${encodeURIComponent(c.id)}`)));
+  ds.forEach(d=>{const x=d.j;if(x&&x.image&&x.illustrator===j.illustrator&&x.hp===j.hp&&x.category===j.category&&x.stage===j.stage&&!seen.has(x.image)){seen.add(x.image);hits.push(x.image)}})}
+ return err?'err':hits.length===1?hits[0]:null}
+function resolveImg(cd){return INFL[cd.id]||(INFL[cd.id]=(async()=>{
+ const m=/tcgdex\.net\/([\w-]+)\//.exec(cd.image||''),lang=m?m[1]:'en',r=await jget(`${API}${lang}/cards/${encodeURIComponent(cd.id)}`);
+ if(r.err)return 'err';
+ if(r.j&&r.j.image){IMGMAP[cd.id]={u:r.j.image};saveMap();return r.j.image}
+ const a=r.j?await findAlt(r.j,lang):null;if(a==='err')return 'err';
+ if(a){IMGMAP[cd.id]={u:a,alt:1};saveMap();return a}
+ IMGMAP[cd.id]={n:Date.now()};saveMap();return null})().finally(()=>{delete INFL[cd.id]}))}
+function cimg(cd,lo,cell,eager){
+ const i=new Image();i.draggable=false;if(lo&&!eager)i.loading='lazy';
+ const ok=()=>{NOIMG.delete(cd.id);FAILED.delete(i);i.style.visibility='';
+  const bs=i.src.replace(/\/(low|high)\.(webp|png)(\?.*)?$/,'');if(/\.png(\?|$)/.test(i.src)&&EXT[bs]!=='png'){EXT[bs]='png';save('binder-ext',JSON.stringify(EXT))}
+  if(cell){const a=IMGMAP[cd.id];cell.classList.remove('noimg');cell.classList.toggle('alt',!!(a&&a.alt&&a.u&&i.src.indexOf(a.u)===0))}};
+ const fail=tr=>{i.style.visibility='hidden';i._tr=tr;NOIMG.add(cd.id);FAILED.add(i);if(cell)cell.classList.add('noimg')};
+ const start=async()=>{
+  const m=IMGMAP[cd.id],none=m&&m.n&&Date.now()-m.n<DAY,bases=none?[]:[...new Set([m&&m.u,cd.image].filter(Boolean))];
+  if(await tryList(i,bases.flatMap(b=>qUrls(b,lo))))return ok();
+  if(await tryList(i,localUrls(cd.id)))return ok();
+  const r=none?null:await resolveImg(cd);
+  if(r&&r!=='err'&&await tryList(i,qUrls(r,lo,'?r=1')))return ok();
+  fail(r==='err'||!!r)};
+ i._start=()=>(i._p=start());i._p=start();return i}
+function retryFailed(all){if(all){Object.keys(IMGMAP).forEach(k=>{if(IMGMAP[k].n)delete IMGMAP[k]});saveMap()}
+ let n=0;[...FAILED].forEach(i=>{if(!i.isConnected){FAILED.delete(i);return}if(all||i._tr){n++;i._start()}});return n}
+async function checkAll(){const cs=[...cardIndex().values()].map(e=>e.c),t=cs.length;let k=0;toast('Checking '+t+' card images…');
+ await Promise.all(Array.from({length:6},async()=>{while(k<t){const c=cs[k++],i=cimg(c,true,null,true);await i._p}}));
+ const ids=new Set(cs.map(c=>c.id)),n=[...NOIMG].filter(x=>ids.has(x)).length;
+ toast(n?n+' of '+t+' cards have no image online':'All '+t+' card images load');if(n)openPanel('noimg')}
+addEventListener('online',()=>{if(FAILED.size)retryFailed(false)});
+let lastV=0;document.addEventListener('visibilitychange',()=>{if(!document.hidden&&FAILED.size&&Date.now()-lastV>3e4){lastV=Date.now();retryFailed(false)}});
 function pageDom(i,lo){const S=D,p=S.pages[i],el=document.createElement('div');el.className='bp';el.style.setProperty('--r',S.rows);el.style.setProperty('--c',S.cols);
  const cov=new Set();p.blocks.forEach(b=>{for(let y=0;y<b.h;y++)for(let x=0;x<b.w;x++)cov.add((b.r+y)+','+(b.c+x))});
  for(let r=0;r<S.rows;r++)for(let c=0;c<S.cols;c++){const k=r+','+c,cell=document.createElement('div');cell.className='cell';cell.dataset.p=i;cell.dataset.k=k;
@@ -210,7 +261,7 @@ function pageDom(i,lo){const S=D,p=S.pages[i],el=document.createElement('div');e
   if(cov.has(k))continue;const cd=p.cards[k];
   if(!cd){cell.classList.add('empty');el.append(cell);continue}
   cell.dataset.id=cd.id;cell.title=cd.name;if(drag&&drag.started&&drag.p===i&&drag.k===k)cell.classList.add('dragsrc');if(MISS.has(cd.id))cell.classList.add('miss');
-  const f=document.createElement('span');f.className='fb';f.textContent=cd.name;cell.append(f,cimg(cd.image,lo));el.append(cell)}
+  const f=document.createElement('span');f.className='fb';const fb=document.createElement('b');fb.textContent=cd.name;const fs=document.createElement('small');fs.textContent=cd.setName+' · #'+cd.number;f.append(fb,fs);cell.append(f,cimg(cd,lo,cell));el.append(cell)}
  return el}
 function fill(c,i){c.textContent='';c.classList.toggle('empty',i==null);if(i!=null)c.appendChild(pageDom(i))}
 function tapCard(e){const x=document.elementFromPoint(e.clientX,e.clientY),z=x&&x.closest&&x.closest('#book .cell');if(!z||fl||z.closest('#leaf'))return;
@@ -316,7 +367,7 @@ function dragMove(e){
 function startGhost(){
  const d=drag,r=d.el.getBoundingClientRect(),im=d.el.querySelector('img'),gh=document.createElement('div'),i2=new Image();
  gh.id='ghost';gh.style.width=r.width+'px';gh.style.height=r.height+'px';gh.style.borderRadius=getComputedStyle(d.el).borderRadius;
- i2.src=im?(im.currentSrc||im.src):'';i2.draggable=false;gh.append(i2);document.body.append(gh);
+ i2.src=im?(im.currentSrc||im.src):'';i2.draggable=false;const fbk=d.el.querySelector('.fb');if(d.el.classList.contains('noimg')&&fbk){gh.style.background='#25252b';gh.append(fbk.cloneNode(true))}else gh.append(i2);document.body.append(gh);
  d.gh=gh;d.ox=d.sx-r.left;d.oy=d.sy-r.top;d.started=true;d.el.classList.add('dragsrc');edgeLoop()}
 function placeGhost(){const d=drag;d.gh.style.transform=`translate(${d.x-d.ox}px,${d.y-d.oy}px) scale(1.06)`}
 function cellAt(){
@@ -388,14 +439,14 @@ let flt='all',q='';
 function cardIndex(){const m=new Map();D.pages.forEach((p,i)=>vis(p).forEach(c=>{let e=m.get(c.id);if(!e)m.set(c.id,e={c,pages:[]});if(!e.pages.includes(i))e.pages.push(i)}));return m}
 function renderList(){
  const idx=cardIndex(),qs=q.toLowerCase().split(/\s+/).filter(Boolean),out=[];
- idx.forEach(e=>{const c=e.c,m=MISS.has(c.id);if(flt==='miss'&&!m)return;if(flt==='have'&&m)return;
+ idx.forEach(e=>{const c=e.c,m=MISS.has(c.id);if(flt==='miss'&&!m)return;if(flt==='have'&&m)return;if(flt==='noimg'&&!NOIMG.has(c.id))return;
   const hay=(c.name+' '+c.setName+' '+c.number+' '+c.id).toLowerCase();if(qs.every(t=>hay.includes(t)))out.push(e)});
  const ul=$('list'),st=ul.scrollTop;ul.textContent='';
- if(!out.length){const li=document.createElement('li');li.className='none';li.textContent=flt==='miss'&&!qs.length?'Nothing missing. Nice!':'No cards match.';ul.append(li);return}
+ if(!out.length){const li=document.createElement('li');li.className='none';li.textContent=flt==='miss'&&!qs.length?'Nothing missing. Nice!':flt==='noimg'&&!qs.length?'No failed images so far — tap “Check all images” to test every card.':'No cards match.';ul.append(li);return}
  const fr=document.createDocumentFragment();
  out.slice(0,300).forEach(e=>{const c=e.c,m=MISS.has(c.id),li=document.createElement('li');li.className='row'+(m?' miss':'');
   const go=document.createElement('button');go.className='go';go.dataset.id=c.id;go.dataset.pg=e.pages[0];
-  const im=cimg(c.image,true);im.className='th';
+  const im=cimg(c,true);im.className='th';
   const t=document.createElement('span');t.className='t';const b=document.createElement('b');b.textContent=c.name;const sm=document.createElement('small');sm.textContent=c.setName+' · #'+c.number;t.append(b,sm);
   const pp=document.createElement('span');pp.className='pp';pp.textContent='p.'+(e.pages[0]+1)+(e.pages.length>1?' +'+(e.pages.length-1):'');
   go.append(im,t,pp);
@@ -423,6 +474,8 @@ $('wCopy').onclick=async()=>{const w=wishText();if(!w.n)return toast('Nothing is
 $('wDl').onclick=()=>{const w=wishText();if(!w.n)return toast('Nothing is marked missing');dl(slug()+'-missing.txt',new Blob([w.t],{type:'text/plain'}));toast('Downloaded '+w.n+' missing cards')};
 $('wClr').onclick=()=>{const n=missCount();if(!n)return toast('Nothing is marked missing');const snap=new Set(MISS);MISS.clear();persist();syncCells();refreshStats();
  toast('Cleared '+n+' missing marks','Undo',()=>{snap.forEach(x=>MISS.add(x));persist();syncCells();refreshStats()})};
+$('wChk').onclick=()=>checkAll();
+$('wImg').onclick=()=>{const n=retryFailed(true);toast(n?'Retrying '+n+' images…':'No failed images to retry');if(n)setTimeout(()=>toast(NOIMG.size?NOIMG.size+' cards still have no image online':'All images loaded'),9000)};
 $('wRst').onclick=()=>{if(!confirm('Reload binder.json from the repo?\n\nEdits made in this browser (moves, images, missing marks) are discarded.'))return;boot(true)};
 
 // ===== import / export =====
@@ -453,7 +506,7 @@ $('gridBtn').onclick=()=>{closePanel();[...tiles.children].forEach((t,i)=>t.clas
 $('jump').onchange=e=>{const n=+e.target.value;if(n>=1&&n<=N)jump(n-1);e.target.value='';e.target.blur()};
 $('pdfBtn').onclick=async e=>{const b=e.currentTarget,pr=$('pr');b.disabled=true;pr.textContent='';
  D.pages.forEach((_,i)=>{const w=document.createElement('div'),m=document.createElement('div');w.className='ppg';m.className='pgm';m.append(pageDom(i));w.append(m);pr.append(w)});
- await Promise.all([...pr.querySelectorAll('img')].map(i=>i.complete?0:new Promise(r=>{i.onload=i.onerror=r;setTimeout(r,15000)})));b.disabled=false;document.title=D.name||'DreamBinder';window.print()};
+ await Promise.all([...pr.querySelectorAll('img')].map(i=>i._p?Promise.race([i._p,new Promise(r=>setTimeout(r,20000))]):i.complete?0:new Promise(r=>{i.onload=i.onerror=r;setTimeout(r,15000)})));b.disabled=false;document.title=D.name||'DreamBinder';window.print()};
 addEventListener('afterprint',()=>{$('pr').textContent='';document.title='DreamBinder'});
 $('close').onclick=closeAll;
 const hp=()=>{const m=/^#page-(\d+)$/.exec(location.hash);return m?+m[1]-1:null};
