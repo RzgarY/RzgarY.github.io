@@ -1,8 +1,9 @@
+const IMGH=new Set(['assets.tcgdex.net','product-images.tcgplayer.com','tcgplayer-cdn.tcgplayer.com','images.pokemontcg.io']);
 const IMG='dbinder-img-v2',APP='dbinder-app-v1';
 self.addEventListener('install',()=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k.startsWith('dbinder-img-')&&k!==IMG)await caches.delete(k);await clients.claim()})()));
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);
- if(u.hostname==='assets.tcgdex.net')e.respondWith(img(r));else if(u.origin===location.origin)e.respondWith(app(r))});
+ if(IMGH.has(u.hostname))e.respondWith(img(r));else if(u.origin===location.origin)e.respondWith(app(r))});
 // only verified 200 CORS responses are cached; opaque/404/5xx are passed through, never stored (old code could cache a broken opaque response forever)
 async function img(r){const c=await caches.open(IMG),key=r.url.split('?')[0],h=await c.match(key);if(h)return h;let res;
  try{res=await fetch(r.url,{mode:'cors'})}catch(_){try{res=await fetch(r)}catch(e){return Response.error()}}
