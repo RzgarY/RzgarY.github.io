@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0f1226">
+<meta name="description" content="Kişisel Pokémon kart binder görüntüleyici">
+<title>Binder Showcase</title>
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<header><div class="brand"><span class="ball" aria-hidden="true"></span><h1><span id="nm">Binder Showcase</span><small id="sub">JSON yükle ya da binder.json ekle</small></h1></div>
+<div class="bar"><button id="bSch" disabled aria-label="Kart ara" title="/">🔍</button><button id="bPg" disabled>▦<span class="lb"> Sayfalar</span></button><button id="bRe" disabled>✋<span class="lb"> Düzenle</span></button><button id="bMn" aria-label="Menü">☰</button></div></header>
+<div id="tb" hidden><button id="bUn" disabled>↩ Geri al</button><button id="bRo" disabled>↪ İleri al</button><button id="bDn" class="on">✔ Bitti</button></div>
+<main><div class="chips" id="chips"></div><div id="view"><div id="drop">JSON dosyanı buraya bırak ya da <b>Menü → JSON aç</b> seçeneğini kullan.</div></div></main>
+<footer><small id="legal">Bu site, kişisel koleksiyonumu dijital olarak görüntülemek için hazırlanmış, ticari amaç taşımayan bir hobi projesidir. Resmî değildir; The Pokémon Company, Nintendo, Creatures Inc. veya GAME FREAK ile bağlantısı, onayı ya da sponsorluğu yoktur. Pokémon, Poké Ball ve ilgili tüm adlar, karakterler ve kart görselleri ilgili hak sahiplerinin tescilli markaları ve telif hakkıdır. Kart verileri ve görselleri TCGdex ve diğer üçüncü taraf kaynaklardan (TCGplayer, Pokémon TCG API) harici olarak yüklenir; bu sitede barındırılmaz. Sayfalardaki özel görseller (varsa) bana aittir.</small></footer>
+<nav id="nav" hidden><button id="pv" aria-label="Önceki">◀</button><select id="sel" aria-label="Sayfa"></select><button id="nx" aria-label="Sonraki">▶</button></nav>
+<dialog id="mn"><h4>Dosya</h4>
+<label class="btn">📂 JSON aç<input id="file" type="file" accept=".json,application/json" hidden></label>
+<button id="bExp" disabled>⬇ JSON indir</button><button id="bPdf" disabled>📄 PDF olarak yazdır</button><p class="hint">İpucu: yazdırma penceresinde “Arka plan grafikleri”ni aç, hedef olarak “PDF olarak kaydet”i seç.</p>
+<h4>Veri</h4><button id="bGh">☁ Sunucudan yenile</button><button id="bScan" disabled>🔄 Tüm görselleri tara</button><button id="bMiss" disabled>⚠️ Görseli olmayanlar (<span id="mc">0</span>)</button>
+<h4>Ayarlar</h4><div class="sg" data-keep><button data-lang="tr">TR</button><button data-lang="en">EN</button></div><button id="bSrc">⚙ Kaynak adresi</button><button id="bClr">🧹 Önbelleği temizle</button>
+<h4>Hakkında</h4><button id="bAb">ℹ️ Yasal / telif notu</button><p><button id="bMx">Kapat</button></p></dialog>
+<dialog id="dlg"></dialog><div id="print"></div>
+<script src="app.js"></script></body></html>
