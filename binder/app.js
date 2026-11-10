@@ -192,18 +192,36 @@ function setBlock(pi,idx,nb){
  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const k=r+','+c;if(inb(r,c,nb)){if(cd[k])cov.push(k)}else if(!cd[k]&&!others.some(o=>inb(r,c,o)))free.push(k)}
  if(cov.length>free.length){alert('Kapladığı kartları taşıyacak boş yer yok.');return false}
  snap();cov.forEach((k,i)=>{cd[free[i]]=cd[k];delete cd[k]});if(idx==null)bl.push(nb);else bl[idx]=nb;return true}
+const parseCode=t=>{t=String(t).trim();const m=t.match(/tcgplayer\.com\/(?:[a-z-]+\/)*product\/(\d+)/i)||t.match(/^#?(\d{4,9})$/);return m?{tp:+m[1]}:{dex:t}};
+async function tpMeta(id){for(const u of[`https://mpapi.tcgplayer.com/v2/product/${id}/details`,`https://mp-search-api.tcgplayer.com/v1/product/${id}/details`]){
+  try{const r=await ft(u,{},6000);if(!r.ok)continue;let j=await r.json();j=(j&&j.results&&j.results[0])||j;
+   const name=j.productName||j.name,ca=j.customAttributes||{};if(name)return{name:String(name).replace(/\s*\(.*?\)\s*$/,'').trim()||name,set:j.setName||j.groupName||'',num:String(ca.number||j.cardNumber||'').split('/')[0]}}catch(e){}}
+ return null}
 function openAdd(pi,r,c){
  const {rows,cols}=D.state,d=showDlg(`<h3 style="margin:0 0 8px">Boş hücre · satır ${r+1}, sütun ${c+1}</h3>
- <b>🃏 Kart ekle (TCG kodu)</b><p class="mu" style="margin:4px 0">TCGdex kodu: <code>swsh12-001</code>, <code>sv03.5-199</code></p>
- <p style="display:flex;gap:6px"><input id="ac" placeholder="swsh12-001"><select id="al">${['en','fr','de','es','it','pt','ja'].map(l=>`<option>${l}</option>`).join('')}</select></p><p id="am" class="mu"></p>
+ <b>🃏 Kart ekle (TCG kodu)</b><p class="mu" style="margin:4px 0">TCGplayer ID ya da link: <code>709288</code> · TCGdex kodu: <code>swsh12-001</code>, <code>sv03.5-199</code></p>
+ <p style="display:flex;gap:6px;flex-wrap:wrap"><input id="ac" placeholder="709288 ya da swsh12-001" autocomplete="off" inputmode="text"><input id="an" placeholder="Kart adı (isteğe bağlı)" hidden><select id="al" title="Dil (sadece TCGdex kodu için)">${['en','fr','de','es','it','pt','ja'].map(l=>`<option>${l}</option>`).join('')}</select></p><p id="am" class="mu"></p>
  <p><button class="pri" id="ab">Kartı ekle</button></p><hr>
  <b>🖼 Görsel bloğu ekle</b><p>Boyut: ${sz('bw',cols,1)} × ${sz('bh',rows,1)} <span class="mu">(genişlik × yükseklik)</span></p>
  <p><label class="btn">Resim seç ve ekle<input id="af" type="file" accept="image/*" hidden></label> <button id="ak">Kapat</button></p>`);
  $('#ak').onclick=()=>d.close();
- $('#ab').onclick=async()=>{const id=$('#ac').value.trim(),m=$('#am');if(!id)return;m.textContent='Aranıyor…';
-  try{const rs=await ft(`https://api.tcgdex.net/v2/${$('#al').value}/cards/${encodeURIComponent(id)}`);if(!rs.ok)throw 0;const j=await rs.json();if(!j.id)throw 0;
-   snap();const cd=D.state.pages[pi].cards=D.state.pages[pi].cards||{};cd[r+','+c]={id:j.id,name:j.name,setName:(j.set&&j.set.name)||'',number:j.localId||'',image:j.image||''};d.close();render()}
-  catch(e){m.textContent='Bulunamadı. Kodu set-numara biçiminde yaz ve dili kontrol et.'}};
+ const putCard=card=>{snap();const cd=D.state.pages[pi].cards=D.state.pages[pi].cards||{};cd[r+','+c]=card;d.close();render()};
+ const addTp=async(id,name)=>{const m=$('#am'),img=await first(tpU(id));
+  if(!img){m.textContent='TCGplayer’da bu ID ile görsel bulunamadı. ID’yi kontrol et.';return}
+  const meta=await tpMeta(id),nm=name||(meta&&meta.name)||'';
+  if(!nm){m.textContent='Kart adı otomatik alınamadı. Aşağıya adı yaz (isteğe bağlı) ve tekrar bas; boş bırakırsan ID ile eklenir.';const a=$('#an');a.hidden=false;a.focus();if(!a.dataset.once){a.dataset.once=1;return}}
+  OV['tp'+id]={tp:id};CA['en:tp'+id]=img;keep();
+  putCard({id:'tp'+id,name:nm||('TCGplayer #'+id),setName:(meta&&meta.set)||'',number:(meta&&meta.num)||'',image:''})};
+ const addDex=async(raw)=>{const lang=$('#al').value,tries=[raw];
+  const mm=raw.match(/^(.+)-(\d{1,3})$/i);if(mm)tries.push(mm[1]+'-'+mm[2].padStart(3,'0'));
+  for(const id of [...new Set(tries)]){try{const rs=await ft(`https://api.tcgdex.net/v2/${lang}/cards/${encodeURIComponent(id)}`);if(!rs.ok)continue;const j=await rs.json();if(!j.id)continue;
+   putCard({id:j.id,name:j.name,setName:(j.set&&j.set.name)||'',number:j.localId||'',image:j.image||''});return}catch(e){}}
+  $('#am').textContent='Bulunamadı. TCGplayer ID/link ya da TCGdex kodunu (set-numara) yaz ve dili kontrol et.'};
+ $('#ab').onclick=async()=>{const raw=$('#ac').value.trim(),m=$('#am');if(!raw)return;m.textContent='Aranıyor…';$('#ab').disabled=true;
+  try{const k=parseCode(raw);if(k.tp)await addTp(k.tp,$('#an').value.trim());else await addDex(k.dex)}
+  catch(e){m.textContent='Bir hata oldu, tekrar dene.'}finally{$('#ab').disabled=false}};
+ $('#ac').onkeydown=e=>{if(e.key==='Enter')$('#ab').click()};
+ $('#ac').oninput=()=>{const k=parseCode($('#ac').value);$('#am').textContent=!$('#ac').value.trim()?'':k.tp?'✔ TCGplayer ID algılandı: '+k.tp:'TCGdex kodu olarak aranacak'};
  $('#af').onchange=async e=>{const f=e.target.files[0];if(!f)return;const w=+$('#bw').value,h=+$('#bh').value,id='img_'+Date.now().toString(36);
   try{IMG[id]=await readImg(f)}catch(_){alert('Resim okunamadı.');return}
   if(setBlock(pi,null,{r:Math.max(0,Math.min(rows-h,r)),c:Math.max(0,Math.min(cols-w,c)),w,h,imageId:id})){d.close();render()}else delete IMG[id]}}
@@ -396,6 +414,10 @@ Uygula§Apply
 Sil§Delete
 yeni resim hazır§new image ready
 Aranıyor…§Searching…
+TCGplayer ID ya da link:§TCGplayer ID or link:
+Bulunamadı. TCGplayer ID/link ya da TCGdex kodunu (set-numara) yaz ve dili kontrol et.§Not found. Enter a TCGplayer ID/link or a TCGdex code (set-number) and check the language.
+TCGplayer’da bu ID ile görsel bulunamadı. ID’yi kontrol et.§No image found on TCGplayer for this ID. Check the ID.
+Bir hata oldu, tekrar dene.§Something went wrong, try again.
 Bulunamadı. Kodu set-numara biçiminde yaz ve dili kontrol et.§Not found. Use the set-number format and check the language.
 Resim okunamadı.§Could not read the image.
 Bu boyut sığmıyor (sayfa dışına taşıyor ya da başka görselle çakışıyor).§This size doesn’t fit (outside the page or overlapping another image).
